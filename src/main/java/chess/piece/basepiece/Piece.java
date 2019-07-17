@@ -28,10 +28,13 @@ abstract public class Piece {
 
     public void onMoved (Position newPosition) {
         if (!newPosition.equals(position)) {
-            hasMoved = true;
             position = newPosition;
         }
+
+        hasMoved = true;
     }
+
+    public void onAnotherPieceMoved () {}
 
     public PieceType getType () {
         return type;

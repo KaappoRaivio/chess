@@ -8,7 +8,7 @@ public class Position extends Pair<Integer, Integer> {
     private static final Pattern stringPattern = Pattern.compile("^[a-hA-H]\\d$");
 
     public Position (int x, int y) {
-        super(x, y);
+        super(limit(0, x, 8), limit(0, y, 8));
     }
 
     public static Position fromString (String position) {
@@ -40,5 +40,15 @@ public class Position extends Pair<Integer, Integer> {
 
     public int getY () {
         return super.getSecond();
+    }
+
+    private static int limit (int lower, int value, int higher) {
+        if (value < lower) {
+            throw new ChessException("Value " + value + " is not within its bounds! (too low)");
+        } else if (value >= higher) {
+            throw new ChessException("Value " + value + " is not within its bounds! (too high)");
+        } else {
+            return value;
+        }
     }
 }

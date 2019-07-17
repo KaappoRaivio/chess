@@ -76,7 +76,7 @@ public class Pawn extends Piece {
                     positions.add(position.offset(1, getForwardDirection()));
                 }
             }
-        } catch (ChessException e) {}
+        } catch (ChessException ignored) {}
 
         try {
             Piece piece = board.getPieceInSquare(position.offsetX(-1));
@@ -85,7 +85,7 @@ public class Pawn extends Piece {
                     positions.add(position.offset(-1, getForwardDirection()));
                 }
             }
-        } catch (ChessException e) {}
+        } catch (ChessException ignored) {}
 
         return positions;
     }

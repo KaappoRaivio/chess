@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Objects;
 
 abstract public class Piece {
-    protected PieceType type;
-    protected PieceColor color;
+    protected final PieceType type;
+    protected final PieceColor color;
     protected Position position;
     protected boolean hasMoved;
 
@@ -29,9 +29,8 @@ abstract public class Piece {
     public void onMoved (Position newPosition) {
         if (!newPosition.equals(position)) {
             position = newPosition;
+            hasMoved = true;
         }
-
-        hasMoved = true;
     }
 
     public void onAnotherPieceMoved () {}

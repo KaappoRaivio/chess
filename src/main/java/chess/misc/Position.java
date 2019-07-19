@@ -26,6 +26,10 @@ public class Position extends Pair<Integer, Integer> {
         return offsetX(x).offsetY(y);
     }
 
+    public Position offset (Position position) {
+        return offset(position.getX(), position.getY());
+    }
+
     public Position offsetX (int x) {
         return new Position(getX() + x, getY());
     }

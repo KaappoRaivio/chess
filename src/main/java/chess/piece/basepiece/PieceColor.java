@@ -12,7 +12,8 @@ public enum PieceColor {
             case WHITE:
                 return BLACK;
             default:
-                throw new ChessException("Cannot invert NO_COLOR!");
+//                throw new ChessException("Cannot invert NO_COLOR!");
+                return NO_COLOR;
         }
     }
 }

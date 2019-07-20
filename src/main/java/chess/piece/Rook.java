@@ -10,23 +10,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Rook extends Piece {
-    public Rook (PieceColor color, Position position) {
-        super(PieceType.ROOK, color, position);
+    public Rook (PieceColor color) {
+        super(PieceType.ROOK, color, color == PieceColor.WHITE ? "♖" : "♜");
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board) {
+    public List<Position> getPossiblePositions (Board board, Position position) {
         List<Position> list = new LinkedList<>();
 
-        list.addAll(handleUp(board));
-        list.addAll(handleDown(board));
-        list.addAll(handleLeft(board));
-        list.addAll(handleRight(board));
+        list.addAll(handleUp(board, position));
+        list.addAll(handleDown(board, position));
+        list.addAll(handleLeft(board, position));
+        list.addAll(handleRight(board, position));
 
         return list;
     }
 
-    public List<Position> handleUp (Board board) {
+    private List<Position> handleUp (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
         for (Position pos = position; pos.getY() < board.getDimY(); pos = pos.offsetY(1)) {
@@ -45,7 +45,7 @@ public class Rook extends Piece {
         return positions;
     }
 
-    public List<Position> handleDown (Board board) {
+    private List<Position> handleDown (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
         for (Position pos = position; pos.getY() >= 0; pos = pos.offsetY(-1)) {
@@ -64,7 +64,7 @@ public class Rook extends Piece {
         return positions;
     }
 
-    public List<Position> handleLeft (Board board) {
+    private List<Position> handleLeft (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
         for (Position pos = position; pos.getX() < board.getDimX(); pos = pos.offsetX(1)) {
@@ -83,7 +83,7 @@ public class Rook extends Piece {
         return positions;
     }
 
-    public List<Position> handleRight (Board board) {
+    private List<Position> handleRight (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
         for (Position pos = position; pos.getX() >= 0; pos = pos.offsetX(-1)) {

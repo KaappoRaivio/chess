@@ -61,7 +61,6 @@ public class ThreatChecker {
 
     private static boolean checkForBishopsAndQueens (Position square, Board board) {
         Piece piece = board.getPieceInSquare(square);
-        int forwardDirection = piece.getForwardDirection();
 
         int x = square.getX();
         int y = square.getY();

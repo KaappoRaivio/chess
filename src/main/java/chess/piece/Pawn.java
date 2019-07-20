@@ -7,38 +7,37 @@ import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Pawn extends Piece {
     private int amountOfMovesSinceLastMoving; //  Used for en passant
 
-    public Pawn (PieceColor color, Position position) {
-        super(PieceType.PAWN, color, position);
+    public Pawn (PieceColor color) {
+        super(PieceType.PAWN, color, color == PieceColor.WHITE ? "♙" : "♟");
 
         amountOfMovesSinceLastMoving = -1;
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board) {
+    public List<Position> getPossiblePositions (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
-        positions.addAll(handleStraightAhead(board));
-        positions.addAll(handleCapture(board));
-        positions.addAll(handleEnPassant(board));
+        positions.addAll(handleStraightAhead(board, position));
+        positions.addAll(handleCapture(board, position));
+        positions.addAll(handleEnPassant(board, position));
 
         return positions;
     }
 
-    private List<Position> handleStraightAhead (Board board) {
+    private List<Position> handleStraightAhead (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
         try {
             if (board.isSquareEmpty(position.offsetY(getForwardDirection()))) {
                 positions.add(position.offsetY(getForwardDirection()));
 
                 try {
-                    if (!hasMoved && board.isSquareEmpty(position.offsetY(getForwardDirection() * 2))) {
+                    if (!isHasMoved() && board.isSquareEmpty(position.offsetY(getForwardDirection() * 2))) {
                         positions.add(position.offsetY(getForwardDirection() * 2));
                     }
                 } catch (ChessException ignored) {}
@@ -48,7 +47,7 @@ public class Pawn extends Piece {
         return positions;
     }
 
-    private List<Position> handleCapture (Board board) {
+    private List<Position> handleCapture (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
         try {
@@ -66,7 +65,7 @@ public class Pawn extends Piece {
         return positions;
     }
 
-    private List<Position> handleEnPassant (Board board) {
+    private List<Position> handleEnPassant (Board board, Position position) {
         List<Position> positions = new LinkedList<>();
 
         try {
@@ -91,8 +90,8 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public void onMoved (Position newPosition) {
-        super.onMoved(newPosition);
+    public void onMoved (Position oldPosition, Position newPosition) {
+        super.onMoved(oldPosition, newPosition);
 
         amountOfMovesSinceLastMoving = 0;
     }
@@ -105,5 +104,9 @@ public class Pawn extends Piece {
 
     private boolean isEligibleForEnPassant () {
         return amountOfMovesSinceLastMoving == 0;
+    }
+
+    public void setAmountOfMovesSinceLastMoving (int amountOfMovesSinceLastMoving) {
+        this.amountOfMovesSinceLastMoving = amountOfMovesSinceLastMoving;
     }
 }

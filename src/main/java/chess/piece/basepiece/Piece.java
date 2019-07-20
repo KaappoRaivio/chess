@@ -10,27 +10,24 @@ import java.util.Objects;
 abstract public class Piece {
     protected final PieceType type;
     protected final PieceColor color;
-    protected Position position;
-    protected boolean hasMoved;
+    private boolean hasMoved;
+    private String symbol;
 
-    public Piece (PieceType type, PieceColor color, Position position) {
-        if (color == PieceColor.NO_COLOR ^ type != PieceType.NO_PIECE) {
+    public Piece (PieceType type, PieceColor color, String symbol) {
+        if (color == PieceColor.NO_COLOR ^ type == PieceType.NO_PIECE) {
             throw new ChessException("The combination " + type + " with color " + color + " is not valid. NO_PIECE and NO_COLOR must be used together!");
         }
 
         this.type = type;
         this.color = color;
-        this.position = position;
+        this.symbol = symbol;
     }
 
 
-    abstract public List<Position> getPossiblePositions (Board board);
+    abstract public List<Position> getPossiblePositions (Board board, Position position);
 
-    public void onMoved (Position newPosition) {
-        if (!newPosition.equals(position)) {
-            position = newPosition;
-            hasMoved = true;
-        }
+    public void onMoved (Position oldPosition, Position newPosition) {
+        setHasMoved(true);
     }
 
     public void onAnotherPieceMoved () {}
@@ -41,10 +38,6 @@ abstract public class Piece {
 
     public PieceColor getColor () {
         return color;
-    }
-
-    public Position getPosition () {
-        return position;
     }
 
     public int getForwardDirection () {
@@ -60,11 +53,7 @@ abstract public class Piece {
 
     @Override
     public String toString () {
-        return "Piece{" +
-                "type=" + type +
-                ", color=" + color +
-                ", position=" + position +
-                '}';
+        return symbol;
     }
 
     @Override
@@ -73,14 +62,20 @@ abstract public class Piece {
         if (o == null || getClass() != o.getClass()) return false;
         Piece piece = (Piece) o;
         return type == piece.type &&
-                color == piece.color &&
-                position.equals(piece.position);
+                color == piece.color;
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(type, color, position);
+        return Objects.hash(type, color);
     }
 
+    public boolean isHasMoved () {
+        return hasMoved;
+    }
+
+    public void setHasMoved (boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
 }

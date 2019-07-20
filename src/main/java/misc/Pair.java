@@ -33,11 +33,11 @@ public class Pair<K, V> {
                 "}";
     }
 
-    protected K getFirst () {
+    public K getFirst () {
         return Optional.ofNullable(first).orElseThrow(() -> new NullPointerException("The first field is null!"));
     }
 
-    protected V getSecond () {
+    public V getSecond () {
         return Optional.ofNullable(second).orElseThrow(() -> new NullPointerException("The second field is null!"));
     }
 }

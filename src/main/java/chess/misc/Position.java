@@ -8,7 +8,11 @@ public class Position extends Pair<Integer, Integer> {
     private static final Pattern stringPattern = Pattern.compile("^[a-hA-H]\\d$");
 
     public Position (int x, int y) {
-        super(limit(0, x, 8), limit(0, y, 8));
+        this(x, y, true);
+    }
+
+    public Position (int x, int y, boolean check) {
+        super(check ? limit(0, x, 8) : x, check ? limit(0, y, 8) : y);
     }
 
     public static Position fromString (String position) {
@@ -17,7 +21,7 @@ public class Position extends Pair<Integer, Integer> {
         }
 
         int x = position.toUpperCase().charAt(0) - 65; //  65 for converting from ASCII to int
-        int y = Integer.parseInt(String.valueOf(position.charAt(1)));
+        int y = Integer.parseInt(String.valueOf(position.charAt(1))) - 1;
 
         return new Position(x, y);
     }

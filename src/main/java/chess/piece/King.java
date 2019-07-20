@@ -15,28 +15,28 @@ public class King extends Piece {
     public static final Position[] offsets = {
             new Position (1, 1),
             new Position (1, 0),
-            new Position (1, -1),
-            new Position (0, -1),
-            new Position (-1, -1),
-            new Position (-1, 0),
-            new Position (-1, 1),
+            new Position (1, -1, false),
+            new Position (0, -1, false),
+            new Position (-1, -1, false),
+            new Position (-1, 0, false),
+            new Position (-1, 1, false),
             new Position (0, 1),
     };
 
-    public King (PieceColor color, Position position) {
-        super(PieceType.KING, color, position);
+    public King (PieceColor color) {
+        super(PieceType.KING, color, color == PieceColor.WHITE ? "♔" : "♚");
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board) {
+    public List<Position> getPossiblePositions (Board board, Position position) {
         return Arrays.stream(offsets).map(item -> {
             try {
                 return position.offset(item);
             } catch (ChessException e) {
-                return position;
+                return position; // Mark all positions outside the board temporarily...
             }
         })
-                .filter(item -> !position.equals(item))
+                .filter(item -> !position.equals(item)) // ... and remove them here
                 .filter(item -> board.getPieceInSquare(item).getColor() != color)
                 .collect(Collectors.toList());
     }

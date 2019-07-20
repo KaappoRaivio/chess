@@ -7,23 +7,22 @@ import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class NoPiece extends Piece {
-    public NoPiece (Position position) {
-        super(PieceType.NO_PIECE, PieceColor.NO_COLOR, position);
+    public NoPiece () {
+        super(PieceType.NO_PIECE, PieceColor.NO_COLOR, ".");
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board) {
+    public List<Position> getPossiblePositions (Board board, Position position) {
         return Collections.emptyList();
     }
 
     @Override
-    public void onMoved (Position newPosition) {
-        throw new ChessException("NoPiece cannot be moved from " + position + " to " + newPosition + "!");
+    public void onMoved (Position oldPosition, Position newPosition) {
+        throw new ChessException("NoPiece cannot be moved from " + oldPosition + " to " + newPosition + "!");
     }
 
     @Override

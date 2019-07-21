@@ -37,7 +37,7 @@ public class Pawn extends Piece {
                 positions.add(position.offsetY(getForwardDirection()));
 
                 try {
-                    if (!isHasMoved() && board.isSquareEmpty(position.offsetY(getForwardDirection() * 2))) {
+                    if (!hasMoved() && board.isSquareEmpty(position.offsetY(getForwardDirection() * 2))) {
                         positions.add(position.offsetY(getForwardDirection() * 2));
                     }
                 } catch (ChessException ignored) {}
@@ -106,7 +106,15 @@ public class Pawn extends Piece {
         return amountOfMovesSinceLastMoving == 0;
     }
 
+    @Override
     public void setAmountOfMovesSinceLastMoving (int amountOfMovesSinceLastMoving) {
         this.amountOfMovesSinceLastMoving = amountOfMovesSinceLastMoving;
+    }
+
+    @Override
+    public Piece deepCopy () {
+        Pawn another = (Pawn) super.deepCopy();
+        another.amountOfMovesSinceLastMoving = amountOfMovesSinceLastMoving;
+        return another;
     }
 }

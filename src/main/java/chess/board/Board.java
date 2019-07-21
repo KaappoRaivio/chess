@@ -3,7 +3,6 @@ package chess.board;
 import chess.misc.ChessException;
 import chess.misc.Position;
 import chess.piece.NoPiece;
-import chess.piece.Pawn;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceType;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +66,7 @@ public class Board {
             String[] row = lines[y].split(" +");
 
             for (int x = 0; x < 8; x++) {
-                boardBuffer[7 - y][x] = notation.getPieceTypeAndColor(row[x]);
+                boardBuffer[7 - y][x] = notation.getPieceTypeAndColor(row[x]);  // "7 - y" because the y axis is inverted in the source file
             }
         }
 
@@ -75,19 +74,15 @@ public class Board {
 
         for (String line : lines) {
             if (moveTimePattern.matcher(line).matches()) {
-                Position position = Position.fromString(line.split(" +")[0]);
-                int amount = Integer.parseInt(line.split(" +")[1]);
+                String[] split = line.split(" +");
+                Position position = Position.fromString(split[0]);
+                int amount = Integer.parseInt(split[1]);
 
                 Piece piece = board.getPieceInSquare(position);
                 if (amount >= 0) {
                     piece.setHasMoved(true);
-
-                    if (piece instanceof Pawn) {
-                        ((Pawn) piece).setAmountOfMovesSinceLastMoving(amount);
-                    }
+                    piece.setAmountOfMovesSinceLastMoving(amount);
                 }
-
-
             }
         }
 

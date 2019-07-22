@@ -20,6 +20,8 @@ public class Board {
     private final int dimX;
     private final int dimY;
 
+    private MoveHistory moveHistory = new MoveHistory();
+
     private static final String hPadding = " ";
     private static final String vPadding = "";
 
@@ -37,8 +39,12 @@ public class Board {
 
     private Board (Piece[][] board) {
         this.board = board;
-        dimX = 8;
-        dimY = 8;
+        dimX = board[0].length;
+        dimY = board.length;
+    }
+
+    public void undo (int level) {
+        moveHistory.undo(board, level);
     }
 
     private static final Pattern moveTimePattern = Pattern.compile(   "^" + // line start
@@ -125,6 +131,23 @@ public class Board {
 
     public int getDimY () {
         return dimY;
+    }
+
+    Piece[][] getBoard () {
+        return board;
+    }
+
+    public Board deepCopy () {
+        Piece[][] newBuffer = new Piece[dimY][dimX];
+
+        for (int y = 0; y < board.length; y++) {
+            if (board[y].length >= 0) System.arraycopy(board[y], 0, newBuffer[y], 0, board[y].length);
+        }
+
+        Board another = new Board(board);
+        another.moveHistory = moveHistory.deepCopy();
+
+        return another;
     }
 
     @Override

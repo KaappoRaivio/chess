@@ -10,8 +10,8 @@ public class Move {
 
     private final Piece pieceUnderDestination;
 
-    private boolean hasOriginPieceMovedBefore;
-    private boolean hasDestinationPieceMovedBefore;
+    private final boolean hasOriginPieceMovedBefore;
+    private final boolean hasDestinationPieceMovedBefore;
 
     public Move (String move, Board board) {
         this(Position.fromString(move.substring(0, 2)), Position.fromString(move.substring(2)), board);
@@ -41,11 +41,15 @@ public class Move {
         return pieceUnderDestination;
     }
 
-    public boolean isHasOriginPieceMovedBefore () {
+    public boolean hasOriginPieceMovedBefore () {
         return hasOriginPieceMovedBefore;
     }
 
-    public boolean isHasDestinationPieceMovedBefore () {
+    public boolean hasDestinationPieceMovedBefore () {
         return hasDestinationPieceMovedBefore;
+    }
+
+    public Move deepCopy () {
+        return this;
     }
 }

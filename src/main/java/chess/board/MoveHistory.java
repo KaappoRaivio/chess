@@ -9,17 +9,17 @@ import chess.piece.basepiece.PieceType;
 import java.util.*;
 
 public class MoveHistory {
-    private Queue<Move> moves = new LinkedList<>();
+    private Deque<Move> moves = new LinkedList<>();
 
     public void addMove (Move move) {
-        moves.add(move);
+        moves.push(move);
     }
 
 
     private void undoOneLevel (Piece[][] buffer) {
         Move lastMove;
         try {
-            lastMove = moves.remove();
+            lastMove = moves.pop();
         } catch (NoSuchElementException e) {
             throw new ChessException("MoveHistory is empty!");
         }
@@ -27,11 +27,14 @@ public class MoveHistory {
         Position origin = lastMove.getOrigin();
         Position destination = lastMove.getDestination();
         if (buffer[origin.getY()][origin.getX()].getType() != PieceType.NO_PIECE) {
-            throw new ChessException("Square " + origin + " should be empty instead of " + buffer[origin.getY()][origin.getX()].getType() + "!");
+            throw new ChessException("Square " + origin + " should be empty instead of " + buffer[origin.getY()][origin.getX()].getType() + "! " + lastMove);
         }
 
         buffer[origin.getY()][origin.getX()] = buffer[destination.getY()][destination.getX()];
         buffer[destination.getY()][destination.getX()] = lastMove.getPieceUnderDestination();
+
+        buffer[origin.getY()][origin.getX()].setHasMoved(lastMove.hasOriginPieceMovedBefore());
+        buffer[destination.getY()][destination.getX()].setHasMoved(lastMove.hasDestinationPieceMovedBefore());
 
     }
 
@@ -49,7 +52,8 @@ public class MoveHistory {
 
         MoveHistory another = new MoveHistory();
         while (!tempBuffer.isEmpty()) {
-            another.moves.add(tempBuffer.remove());
+            another.moves.add(tempBuffer.peek());
+            moves.add(tempBuffer.remove());
         }
 
         return another;

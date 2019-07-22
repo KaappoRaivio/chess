@@ -6,8 +6,8 @@ import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Rook extends Piece {
     public Rook (PieceColor color) {
@@ -15,8 +15,8 @@ public class Rook extends Piece {
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board, Position position) {
-        List<Position> list = new LinkedList<>();
+    public Set<Position> getPossiblePositions (Board board, Position position) {
+        Set<Position> list = new HashSet<>();
 
         list.addAll(handleUp(board, position));
         list.addAll(handleDown(board, position));
@@ -26,8 +26,8 @@ public class Rook extends Piece {
         return list;
     }
 
-    private List<Position> handleUp (Board board, Position position) {
-        List<Position> positions = new LinkedList<>();
+    private Set<Position> handleUp (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
 
         for (Position pos = position; pos.getY() < board.getDimY(); pos = pos.offsetY(1)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -45,8 +45,8 @@ public class Rook extends Piece {
         return positions;
     }
 
-    private List<Position> handleDown (Board board, Position position) {
-        List<Position> positions = new LinkedList<>();
+    private Set<Position> handleDown (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
 
         for (Position pos = position; pos.getY() >= 0; pos = pos.offsetY(-1)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -64,8 +64,8 @@ public class Rook extends Piece {
         return positions;
     }
 
-    private List<Position> handleLeft (Board board, Position position) {
-        List<Position> positions = new LinkedList<>();
+    private Set<Position> handleLeft (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
 
         for (Position pos = position; pos.getX() < board.getDimX(); pos = pos.offsetX(1)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -83,8 +83,8 @@ public class Rook extends Piece {
         return positions;
     }
 
-    private List<Position> handleRight (Board board, Position position) {
-        List<Position> positions = new LinkedList<>();
+    private Set<Position> handleRight (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
 
         for (Position pos = position; pos.getX() >= 0; pos = pos.offsetX(-1)) {
             Piece piece = board.getPieceInSquare(pos);

@@ -9,12 +9,18 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
 public class ThreatChecker {
-    public static boolean isUnderThreat (Position square, Board board) {
-        return checkForPawns(square, board)
-            && checkForKings(square, board)
-            && checkForKnights(square, board)
-            && checkForBishopsAndQueens(square, board)
-            && checkForRooksAndQueens(square, board);
+    static boolean isUnderThreat (Position square, Board board) {
+        boolean pawns = checkForPawns(square, board);
+        boolean kings = checkForKings(square, board);
+        boolean knights = checkForKnights(square, board);
+        boolean bishopsAndQueens = checkForBishopsAndQueens(square, board);
+        boolean rooksAndQueens = checkForRooksAndQueens(square, board);
+
+        return pawns
+            || kings
+            || knights
+            || bishopsAndQueens
+            || rooksAndQueens;
     }
 
     private static boolean checkForRooksAndQueens (Position square, Board board) {
@@ -25,7 +31,7 @@ public class ThreatChecker {
         int y = square.getY();
 
         for (int checkY = y; checkY < board.getDimY(); checkY++) {
-            Piece currentPiece = board.getPieceInSquare(square.offsetY(checkY));
+            Piece currentPiece = board.getPieceInSquare(new Position(x, checkY));
 
             if ((currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -33,7 +39,7 @@ public class ThreatChecker {
         }
 
         for (int checkY = y; checkY >= 0; checkY--) {
-            Piece currentPiece = board.getPieceInSquare(square.offsetY(checkY));
+            Piece currentPiece = board.getPieceInSquare(new Position(x, checkY));
 
             if ((currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -41,7 +47,7 @@ public class ThreatChecker {
         }
 
         for (int checkX = x; checkX < board.getDimX(); checkX++) {
-            Piece currentPiece = board.getPieceInSquare(square.offsetX(checkX));
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, y));
 
             if ((currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -49,7 +55,7 @@ public class ThreatChecker {
         }
 
         for (int checkX = x; checkX >= 0; checkX--) {
-            Piece currentPiece = board.getPieceInSquare(square.offsetX(checkX));
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, y));
 
             if ((currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -69,7 +75,7 @@ public class ThreatChecker {
         int checkY = y;
 
         while (checkX < board.getDimX() && checkY < board.getDimY()) {
-            Piece currentPiece = board.getPieceInSquare(square.offset(checkX, checkY));
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
             if ((currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -83,7 +89,7 @@ public class ThreatChecker {
         checkY = y;
 
         while (checkX < board.getDimX() && checkY >= 0) {
-            Piece currentPiece = board.getPieceInSquare(square.offset(checkX, checkY));
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
             if ((currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -97,7 +103,7 @@ public class ThreatChecker {
         checkY = y;
 
         while (checkX >= 0 && checkY >= 0) {
-            Piece currentPiece = board.getPieceInSquare(square.offset(checkX, checkY));
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
             if ((currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -111,7 +117,7 @@ public class ThreatChecker {
         checkY = y;
 
         while (checkX >= 0 && checkY < board.getDimY()) {
-            Piece currentPiece = board.getPieceInSquare(square.offset(checkX, checkY));
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
             if ((currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
                 return true;
@@ -169,11 +175,20 @@ public class ThreatChecker {
     private static boolean checkForPawns (Position square, Board board) {
         Piece piece = board.getPieceInSquare(square);
 
-        Piece right = board.getPieceInSquare(square.offset(1, -piece.getForwardDirection()));
-        Piece left = board.getPieceInSquare(square.offset(-1, -piece.getForwardDirection()));
+        Piece right = null;
+        try {
+            right = board.getPieceInSquare(square.offset(1, -piece.getForwardDirection()));
+        } catch (ChessException ignored) { }
 
-        return right.getType() == PieceType.PAWN && right.getColor() == piece.getColor().invert()
-            ||  left.getType() == PieceType.PAWN &&  left.getColor() == piece.getColor().invert();
+
+        Piece left = null;
+        try {
+            left = board.getPieceInSquare(square.offset(-1, -piece.getForwardDirection()));
+        } catch (ChessException ignored) { }
+
+
+        return right != null && right.getType() == PieceType.PAWN && right.getColor() == piece.getColor().invert()
+            ||  left != null && left.getType() == PieceType.PAWN &&  left.getColor() == piece.getColor().invert();
     }
 
 }

@@ -3,10 +3,11 @@ package chess.piece.basepiece;
 import chess.board.Board;
 import chess.misc.ChessException;
 import chess.misc.Position;
+import chess.move.Move;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 abstract public class Piece {
     private PieceType type;
@@ -25,13 +26,13 @@ abstract public class Piece {
     }
 
 
-    abstract public List<Position> getPossiblePositions (Board board, Position position);
+    abstract public Set<Position> getPossiblePositions (Board board, Position position);
 
-    public void onMoved (Position oldPosition, Position newPosition) {
+    public void onMoved (Move move, Board board) {
         setHasMoved(true);
     }
 
-    public void onAnotherPieceMoved () {
+    public void onAnotherPieceMoved (Move move, Board board) {
     }
 
     public PieceType getType () {

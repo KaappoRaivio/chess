@@ -4,6 +4,8 @@ import chess.board.Board;
 import chess.misc.Position;
 import chess.piece.basepiece.Piece;
 
+import java.util.Objects;
+
 public class Move {
     private final Position origin;
     private final Position destination;
@@ -51,5 +53,27 @@ public class Move {
 
     public Move deepCopy () {
         return this;
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Move move = (Move) o;
+        return hasOriginPieceMovedBefore == move.hasOriginPieceMovedBefore &&
+                hasDestinationPieceMovedBefore == move.hasDestinationPieceMovedBefore &&
+                getOrigin().equals(move.getOrigin()) &&
+                getDestination().equals(move.getDestination()) &&
+                getPieceUnderDestination().equals(move.getPieceUnderDestination());
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(getOrigin(), getDestination(), getPieceUnderDestination(), hasOriginPieceMovedBefore, hasDestinationPieceMovedBefore);
+    }
+
+    @Override
+    public String toString () {
+        return origin + "" + destination;
     }
 }

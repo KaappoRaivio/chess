@@ -3,12 +3,13 @@ package chess.piece;
 import chess.board.Board;
 import chess.misc.ChessException;
 import chess.misc.Position;
+import chess.move.Move;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 public class NoPiece extends Piece {
     public NoPiece () {
@@ -16,13 +17,13 @@ public class NoPiece extends Piece {
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board, Position position) {
-        return Collections.emptyList();
+    public Set<Position> getPossiblePositions (Board board, Position position) {
+        return Collections.emptySet();
     }
 
     @Override
-    public void onMoved (Position oldPosition, Position newPosition) {
-        throw new ChessException("NoPiece cannot be moved from " + oldPosition + " to " + newPosition + "!");
+    public void onMoved (Move move, Board board) {
+        throw new ChessException("NoPiece cannot be moved from " + move.getOrigin() + " to " + move.getDestination() + "!");
     }
 
     @Override

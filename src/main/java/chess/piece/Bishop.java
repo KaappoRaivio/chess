@@ -7,7 +7,9 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Bishop extends Piece {
     public Bishop (PieceColor color) {
@@ -15,8 +17,8 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board, Position position) {
-        List<Position> positions = new ArrayList<>();
+    public Set<Position> getPossiblePositions (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
 
         positions.addAll(handleUpRight(board, position));
         positions.addAll(handleUpLeft(board, position));
@@ -26,13 +28,13 @@ public class Bishop extends Piece {
         return positions;
     }
 
-    private List<Position> handleUpRight (Board board, Position position) {
-        List<Position> positions = new ArrayList<>();
+    private Set<Position> handleUpRight (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
         int checkX = position.getX();
         int checkY = position.getY();
 
         while (checkX < board.getDimX() && checkY < board.getDimY()) {
-            Position newPosition = position.offset(checkX, checkY);
+            Position newPosition = new Position(checkX, checkY);
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
@@ -50,13 +52,13 @@ public class Bishop extends Piece {
         return positions;
     }
 
-    private List<Position> handleUpLeft (Board board, Position position) {
-        List<Position> positions = new ArrayList<>();
+    private Set<Position> handleUpLeft (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
         int checkX = position.getX();
         int checkY = position.getY();
 
         while (checkX >= 0 && checkY < board.getDimY()) {
-            Position newPosition = position.offset(checkX, checkY);
+            Position newPosition = new Position(checkX, checkY);
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
@@ -74,13 +76,13 @@ public class Bishop extends Piece {
         return positions;
     }
 
-    private List<Position> handleDownLeft (Board board, Position position) {
-        List<Position> positions = new ArrayList<>();
+    private Set<Position> handleDownLeft (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
         int checkX = position.getX();
         int checkY = position.getY();
 
         while (checkX >= 0 && checkY >= 0) {
-            Position newPosition = position.offset(checkX, checkY);
+            Position newPosition = new Position(checkX, checkY);
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
@@ -98,13 +100,13 @@ public class Bishop extends Piece {
         return positions;
     }
 
-    private List<Position> handleDownRight (Board board, Position position) {
-        List<Position> positions = new ArrayList<>();
+    private Set<Position> handleDownRight (Board board, Position position) {
+        Set<Position> positions = new HashSet<>();
         int checkX = position.getX();
         int checkY = position.getY();
 
         while (checkX < board.getDimX() && checkY >= 0) {
-            Position newPosition = position.offset(checkX, checkY);
+            Position newPosition = new Position(checkX, checkY);
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {

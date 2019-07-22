@@ -2,6 +2,7 @@ package chess.board;
 
 import chess.misc.ChessException;
 import chess.misc.Position;
+import chess.move.Move;
 import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceType;
@@ -11,6 +12,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -117,6 +120,10 @@ public class Board {
         }
     }
 
+    public Set<Position> getDestinations (Position position) {
+        return getPieceInSquare(position).getPossiblePositions(this, position);
+    }
+
     public boolean isSquareEmpty (Position position) {
         return getPieceInSquare(position).getType() == PieceType.NO_PIECE;
     }
@@ -135,6 +142,59 @@ public class Board {
 
     Piece[][] getBoard () {
         return board;
+    }
+
+    public boolean isMoveLegal (Move move) {
+        boolean result = getPieceInSquare(move.getOrigin()).getPossiblePositions(this, move.getOrigin()).contains(move.getDestination());
+        if (!result) {
+            System.out.println("BINGO2");
+        }
+        return result;
+    }
+    
+    public Set<Move> getAllPossibleMoves () {
+        Set<Move> moves = new HashSet<>();
+
+        for (int y = 0; y < board.length; y++) {
+            for (int x = 0; x < board[y].length; x++) {
+                for (Position possiblePosition : getPieceInSquare(new Position(x, y)).getPossiblePositions(this, new Position(x, y))) {
+                    if (!isMoveLegal(new Move(new Position(x, y), possiblePosition, this))) {
+                        System.out.println("BINGO");
+                    }
+                    moves.add(new Move(new Position(x, y), possiblePosition, this));
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    public void makeMove (Move move) {
+        if (isMoveLegal(move)) {
+            makeDummyMove(move);
+        } else {
+            throw new ChessException("Move " + move + " isn't legal for position \n" + this + "\n!");
+        }
+    }
+
+    private void makeDummyMove (Move move) {
+        Position origin = move.getOrigin();
+        Position destination = move.getDestination();
+
+        board[destination.getY()][destination.getX()] = getPieceInSquare(origin);
+        board[origin.getY()][origin.getX()] = new NoPiece();
+
+        broadcastMove(move);
+        getPieceInSquare(destination).onMoved(move, this);
+        moveHistory.addMove(move);
+    }
+
+    private void broadcastMove (Move move) {
+        for (int y = 0; y < dimY; y++) {
+            for (int x = 0; x < dimX; x++) {
+                getPieceInSquare(new Position(x, y)).onAnotherPieceMoved(move, this);
+            }
+        }
     }
 
     public Board deepCopy () {
@@ -171,6 +231,6 @@ public class Board {
             builder.append(hPadding).append(y + 1);
         }
 
-        return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).toString();
+        return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).append("\n").toString();
     }
 }

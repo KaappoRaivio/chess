@@ -6,7 +6,7 @@ import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.List;
+import java.util.Set;
 
 public class Queen extends Piece {
     public Queen (PieceColor color) {
@@ -14,7 +14,10 @@ public class Queen extends Piece {
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board, Position position) {
-        return null;
+    public Set<Position> getPossiblePositions (Board board, Position position) {
+        Set<Position> moves = new Rook(color).getPossiblePositions(board, position);
+        moves.addAll(new Bishop(color).getPossiblePositions(board, position));
+
+        return moves;
     }
 }

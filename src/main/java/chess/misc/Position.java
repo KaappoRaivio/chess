@@ -27,19 +27,35 @@ public class Position extends Pair<Integer, Integer> {
     }
 
     public Position offset (int x, int y) {
-        return offsetX(x).offsetY(y);
+        return offset(x, y, true);
+    }
+
+    public Position offset (int x, int y, boolean check) {
+        return offsetX(x, check).offsetY(y, check);
     }
 
     public Position offset (Position position) {
-        return offset(position.getX(), position.getY());
+        return offset(position, true);
+    }
+
+    public Position offset (Position position, boolean check) {
+        return offset(position.getX(), position.getY(), check);
     }
 
     public Position offsetX (int x) {
-        return new Position(getX() + x, getY());
+        return offsetX(x, true);
+    }
+
+    public Position offsetX (int x, boolean check) {
+        return new Position(getX() + x, getY(), check);
     }
 
     public Position offsetY (int y) {
-        return new Position(getX(), getY() + y);
+        return offsetY(y, true);
+    }
+
+    public Position offsetY (int y, boolean check) {
+        return new Position(getX(), getY() + y, check);
     }
 
     public int getX () {
@@ -58,5 +74,11 @@ public class Position extends Pair<Integer, Integer> {
         } else {
             return value;
         }
+    }
+
+    @Override
+    public String toString () {
+        char xString = (char) (getX() + 65);
+        return xString + "" + (getY() + 1);
     }
 }

@@ -8,7 +8,7 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class King extends Piece {
@@ -28,7 +28,7 @@ public class King extends Piece {
     }
 
     @Override
-    public List<Position> getPossiblePositions (Board board, Position position) {
+    public Set<Position> getPossiblePositions (Board board, Position position) {
         return Arrays.stream(offsets).map(item -> {
             try {
                 return position.offset(item);
@@ -38,6 +38,6 @@ public class King extends Piece {
         })
                 .filter(item -> !position.equals(item)) // ... and remove them here
                 .filter(item -> board.getPieceInSquare(item).getColor() != color)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

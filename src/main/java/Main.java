@@ -6,9 +6,15 @@ import chess.move.Move;
 
 public class Main {
     public static void main (String[] args) {
-        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos1.txt", BoardNotation.DEFAULT_NOTATION);
+        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos3.txt", BoardNotation.DEFAULT_NOTATION);
 //        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
         System.out.println(board);
+        System.out.println(board.isMoveLegal(new Move("C5E5", board)));
+//        System.out.println(board.isSquareUnderThreat(Position.fromString("E1")));
+//        board.makeMove(new Move("E1C1", board));
+//        System.out.println(board);
+//        board.undo(1);
+//        System.out.println(board);
 
 //        board.getAllPossibleMoves().forEach(move -> {
 //            try {
@@ -37,7 +43,7 @@ public class Main {
 //            }
 //        });
 
-        System.out.println(board.isSquareUnderThreat(Position.fromString("A8")));
+//        System.out.println(board.isSquareUnderThreat(Position.fromString("A8")));
 
 
 //        board.makeMove(new Move("C2C3", board));

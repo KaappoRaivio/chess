@@ -3,6 +3,7 @@ package chess.board;
 import chess.misc.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
+import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceType;
 
@@ -36,6 +37,10 @@ public class MoveHistory {
         buffer[origin.getY()][origin.getX()].setHasMoved(lastMove.hasOriginPieceMovedBefore());
         buffer[destination.getY()][destination.getX()].setHasMoved(lastMove.hasDestinationPieceMovedBefore());
 
+        boolean castling = isCastling(buffer, lastMove);
+        moveRookBackIfWasCastling(buffer, lastMove, castling);
+
+
     }
 
     void undo (Piece[][] buffer, int times) {
@@ -57,5 +62,36 @@ public class MoveHistory {
         }
 
         return another;
+    }
+
+    private boolean isCastling (Piece[][] buffer, Move move) {
+        return buffer[move.getOrigin().getY()][move.getOrigin().getX()].getType() == PieceType.KING && Math.abs(move.getOrigin().getX() - move.getDestination().getX()) == 2;
+    }
+
+    private int getCastlingDirection (Move move) {
+        return Integer.compare(move.getDestination().getX() - move.getOrigin().getX(), 0);
+    }
+
+    private void moveRookBackIfWasCastling (Piece[][] buffer, Move move, boolean castling) {
+        if (castling) {
+            int castlingDirection = getCastlingDirection(move);
+
+            Position oldRookPos;
+            Position newRookPos;
+
+            if (castlingDirection > 0 ) {
+                oldRookPos = move.getOrigin().offsetX(1);
+                newRookPos = move.getOrigin().offsetX(3);
+            } else if (castlingDirection < 0) {
+                oldRookPos = move.getOrigin().offsetX(-1);
+                newRookPos = move.getOrigin().offsetX(-4);
+            } else {
+                throw new ChessException("Not a castling! (" + move + ")");
+            }
+
+            buffer[newRookPos.getY()][newRookPos.getX()] = buffer[oldRookPos.getY()][oldRookPos.getX()];
+            buffer[oldRookPos.getY()][oldRookPos.getX()] = new NoPiece();
+            buffer[newRookPos.getY()][newRookPos.getX()].setHasMoved(false);
+        }
     }
 }

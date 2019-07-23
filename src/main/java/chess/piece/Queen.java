@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Queen extends Piece {
     public Queen (PieceColor color) {
-        super(PieceType.QUEEN, color, color == PieceColor.WHITE ? "♕" : "♛");
+        super(PieceType.QUEEN, color, color == PieceColor.WHITE ? "♕" : "♛", 9);
     }
 
     @Override

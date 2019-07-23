@@ -14,8 +14,9 @@ abstract public class Piece {
     protected PieceColor color;
     private boolean hasMoved;
     private String symbol;
+    private int value;
 
-    public Piece (PieceType type, PieceColor color, String symbol) {
+    public Piece (PieceType type, PieceColor color, String symbol, int value) {
         if (color == PieceColor.NO_COLOR ^ type == PieceType.NO_PIECE) {
             throw new ChessException("The combination " + type + " with color " + color + " is not valid. NO_PIECE and NO_COLOR must be used together!");
         }
@@ -50,7 +51,7 @@ abstract public class Piece {
             case BLACK:
                 return -1;
             default:
-                throw new ChessException("Not applicable!");
+                throw new ChessException("Not applicable! " + toString());
         }
     }
 
@@ -99,4 +100,7 @@ abstract public class Piece {
         }
     }
 
+    public int getValue () {
+        return value;
+    }
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class NoPiece extends Piece {
     public NoPiece () {
-        super(PieceType.NO_PIECE, PieceColor.NO_COLOR, ".");
+        super(PieceType.NO_PIECE, PieceColor.NO_COLOR, ".", 0);
     }
 
     @Override

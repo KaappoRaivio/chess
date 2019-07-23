@@ -6,14 +6,12 @@ import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Bishop extends Piece {
     public Bishop (PieceColor color) {
-        super(PieceType.BISHOP, color, color == PieceColor.WHITE ? "♗" : "♝");
+        super(PieceType.BISHOP, color, color == PieceColor.WHITE ? "♗" : "♝", 3);
     }
 
     @Override
@@ -30,8 +28,8 @@ public class Bishop extends Piece {
 
     private Set<Position> handleUpRight (Board board, Position position) {
         Set<Position> positions = new HashSet<>();
-        int checkX = position.getX();
-        int checkY = position.getY();
+        int checkX = position.getX() + 1;
+        int checkY = position.getY() + 1;
 
         while (checkX < board.getDimX() && checkY < board.getDimY()) {
             Position newPosition = new Position(checkX, checkY);
@@ -54,8 +52,8 @@ public class Bishop extends Piece {
 
     private Set<Position> handleUpLeft (Board board, Position position) {
         Set<Position> positions = new HashSet<>();
-        int checkX = position.getX();
-        int checkY = position.getY();
+        int checkX = position.getX() - 1;
+        int checkY = position.getY() + 1;
 
         while (checkX >= 0 && checkY < board.getDimY()) {
             Position newPosition = new Position(checkX, checkY);
@@ -78,8 +76,8 @@ public class Bishop extends Piece {
 
     private Set<Position> handleDownLeft (Board board, Position position) {
         Set<Position> positions = new HashSet<>();
-        int checkX = position.getX();
-        int checkY = position.getY();
+        int checkX = position.getX() - 1;
+        int checkY = position.getY() - 1;
 
         while (checkX >= 0 && checkY >= 0) {
             Position newPosition = new Position(checkX, checkY);
@@ -102,8 +100,8 @@ public class Bishop extends Piece {
 
     private Set<Position> handleDownRight (Board board, Position position) {
         Set<Position> positions = new HashSet<>();
-        int checkX = position.getX();
-        int checkY = position.getY();
+        int checkX = position.getX() + 1;
+        int checkY = position.getY() - 1;
 
         while (checkX < board.getDimX() && checkY >= 0) {
             Position newPosition = new Position(checkX, checkY);

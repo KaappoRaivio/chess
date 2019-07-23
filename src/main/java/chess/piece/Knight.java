@@ -25,7 +25,7 @@ public class Knight extends Piece {
 
 
     public Knight (PieceColor color) {
-        super(PieceType.KNIGHT, color, color == PieceColor.WHITE ? "♘" : "♞");
+        super(PieceType.KNIGHT, color, color == PieceColor.WHITE ? "♘" : "♞", 3);
     }
 
     @Override

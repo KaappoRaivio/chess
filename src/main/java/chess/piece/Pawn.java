@@ -15,7 +15,7 @@ public class Pawn extends Piece {
     private int amountOfMovesSinceLastMoving; //  Used for en passant
 
     public Pawn (PieceColor color) {
-        super(PieceType.PAWN, color, color == PieceColor.WHITE ? "♙" : "♟");
+        super(PieceType.PAWN, color, color == PieceColor.WHITE ? "♙" : "♟", 1);
 
         amountOfMovesSinceLastMoving = -1;
     }

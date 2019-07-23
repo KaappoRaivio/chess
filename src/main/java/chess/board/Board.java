@@ -3,8 +3,10 @@ package chess.board;
 import chess.misc.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
+import chess.piece.King;
 import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
+import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,27 +25,24 @@ public class Board {
     private final int dimX;
     private final int dimY;
 
+    private Position whiteKingPos;
+    private Position blackKingPos;
+
     private MoveHistory moveHistory = new MoveHistory();
 
     private static final String hPadding = " ";
     private static final String vPadding = "";
 
 
-    public Board () {
-        this(8, 8);
-    }
 
-    public Board (int dimX, int dimY) {
-        initBoard(dimX, dimY);
 
-        this.dimX = dimX;
-        this.dimY = dimY;
-    }
-
-    private Board (Piece[][] board) {
+    private Board (Piece[][] board, Position whiteKingPos, Position blackKingPos) {
         this.board = board;
-        dimX = board[0].length;
-        dimY = board.length;
+        this.dimX = board[0].length;
+        this.dimY = board.length;
+
+        this.whiteKingPos = whiteKingPos;
+        this.blackKingPos = blackKingPos;
     }
 
     public void undo (int level) {
@@ -71,15 +70,37 @@ public class Board {
 
         String[] lines = data.split("\n");
 
+        Position whiteKingPos = null;
+        Position blackKingPos = null;
+
         for (int y = 0; y < 8; y++) {
             String[] row = lines[y].split(" +");
 
             for (int x = 0; x < 8; x++) {
-                boardBuffer[7 - y][x] = notation.getPieceTypeAndColor(row[x]);  // "7 - y" because the y axis is inverted in the source file
+                Piece pieceTypeAndColor = notation.getPieceTypeAndColor(row[x]); // "7 - y" because the y axis is inverted in the source file
+                if (pieceTypeAndColor.getType() == PieceType.KING && pieceTypeAndColor.getColor() == PieceColor.WHITE) {
+                    if (whiteKingPos == null) {
+                        whiteKingPos = new Position(x, y);
+                    } else {
+                        throw new ChessException("Cannot have more than one kings (on board file " + path + ")!");
+                    }
+                } else if (pieceTypeAndColor.getType() == PieceType.KING && pieceTypeAndColor.getColor() == PieceColor.BLACK) {
+                    if (blackKingPos == null) {
+                        blackKingPos = new Position(x, 7 - y);
+                    } else {
+                        throw new ChessException("Cannot have more than one kings (on board file " + path + ")!");
+                    }
+                }
+
+                boardBuffer[7 - y][x] = pieceTypeAndColor;
             }
         }
 
-        Board board = new Board(boardBuffer);
+        if (whiteKingPos == null || blackKingPos == null) {
+            throw new ChessException("Couldn't find kings from board file " + path + "!");
+        }
+
+        Board board = new Board(boardBuffer, whiteKingPos, blackKingPos);
 
         for (String line : lines) {
             if (moveTimePattern.matcher(line).matches()) {
@@ -146,10 +167,15 @@ public class Board {
 
     public boolean isMoveLegal (Move move) {
         boolean result = getPieceInSquare(move.getOrigin()).getPossiblePositions(this, move.getOrigin()).contains(move.getDestination());
-        if (!result) {
-            System.out.println("BINGO2");
+        PieceColor color = getPieceInSquare(move.getOrigin()).getColor();
+        if (result) {
+            makeDummyMove(move);
+            boolean isPositionLegal = !isSquareUnderThreat(color == PieceColor.WHITE ? whiteKingPos : blackKingPos); // is the player's king in check after the move?
+            undo(1);
+
+            return isPositionLegal;
         }
-        return result;
+        return false;
     }
     
     public Set<Move> getAllPossibleMoves () {
@@ -159,9 +185,10 @@ public class Board {
             for (int x = 0; x < board[y].length; x++) {
                 for (Position possiblePosition : getPieceInSquare(new Position(x, y)).getPossiblePositions(this, new Position(x, y))) {
                     if (!isMoveLegal(new Move(new Position(x, y), possiblePosition, this))) {
-                        System.out.println("BINGO");
+                        new ChessException("Warning! not legal: " + new Move(new Position(x, y), possiblePosition, this) + "!").printStackTrace();
+                    } else {
+                        moves.add(new Move(new Position(x, y), possiblePosition, this));
                     }
-                    moves.add(new Move(new Position(x, y), possiblePosition, this));
                 }
             }
         }
@@ -180,6 +207,17 @@ public class Board {
     private void makeDummyMove (Move move) {
         Position origin = move.getOrigin();
         Position destination = move.getDestination();
+        if (getPieceInSquare(origin).getType() == PieceType.KING) {
+            if (getPieceInSquare(origin).getColor() == PieceColor.WHITE) {
+                whiteKingPos = destination;
+            } else if (getPieceInSquare(origin).getColor() == PieceColor.BLACK) {
+                blackKingPos = destination;
+            } else {
+                throw new ChessException("King has NO_COLOR!");
+            }
+        }
+
+        boolean castling = isCastling(move);
 
         board[destination.getY()][destination.getX()] = getPieceInSquare(origin);
         board[origin.getY()][origin.getX()] = new NoPiece();
@@ -187,6 +225,35 @@ public class Board {
         broadcastMove(move);
         getPieceInSquare(destination).onMoved(move, this);
         moveHistory.addMove(move);
+        moveRookIfCastling(move, castling);
+    }
+
+    private void moveRookIfCastling (Move move, boolean castling) {
+        if (castling) {
+            int castlingDirection = getCastlingDirection(move);
+
+            Position origin = move.getOrigin();
+
+            if (castlingDirection > 0) {
+                Position rookPos = new Position(7, origin.getY());
+                board[origin.getY()][origin.getX() + 1] = getPieceInSquare(rookPos);
+                board[rookPos.getY()][rookPos.getX()] = new NoPiece();
+            } else if (castlingDirection < 0) {
+                Position rookPos = new Position(0, origin.getY());
+                board[origin.getY()][origin.getX() - 1] = getPieceInSquare(rookPos);
+                board[rookPos.getY()][rookPos.getX()] = new NoPiece();
+            } else {
+                throw new ChessException("Error! " + move);
+            }
+        }
+    }
+
+    private boolean isCastling (Move move) {
+        return getPieceInSquare(move.getOrigin()).getType() == PieceType.KING && Math.abs(move.getOrigin().getX() - move.getDestination().getX()) == 2;
+    }
+
+    private int getCastlingDirection (Move move) {
+        return Integer.compare(move.getDestination().getX() - move.getOrigin().getX(), 0);
     }
 
     private void broadcastMove (Move move) {
@@ -204,7 +271,7 @@ public class Board {
             if (board[y].length >= 0) System.arraycopy(board[y], 0, newBuffer[y], 0, board[y].length);
         }
 
-        Board another = new Board(board);
+        Board another = new Board(board, whiteKingPos, blackKingPos);
         another.moveHistory = moveHistory.deepCopy();
 
         return another;

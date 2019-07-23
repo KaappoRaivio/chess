@@ -7,6 +7,7 @@ import chess.piece.basepiece.Piece;
 import java.util.Objects;
 
 public class Move {
+
     private final Position origin;
     private final Position destination;
 
@@ -14,6 +15,7 @@ public class Move {
 
     private final boolean hasOriginPieceMovedBefore;
     private final boolean hasDestinationPieceMovedBefore;
+
 
     public Move (String move, Board board) {
         this(Position.fromString(move.substring(0, 2)), Position.fromString(move.substring(2)), board);
@@ -76,4 +78,5 @@ public class Move {
     public String toString () {
         return origin + "" + destination;
     }
+
 }

@@ -2,7 +2,9 @@ package chess.piece.basepiece;
 
 import chess.misc.ChessException;
 
-public enum PieceColor {
+import java.io.Serializable;
+
+public enum PieceColor implements Serializable {
     BLACK, WHITE, NO_COLOR;
 
     public PieceColor invert () {

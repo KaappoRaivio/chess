@@ -3,23 +3,25 @@ package chess.board;
 import chess.misc.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
-import chess.piece.King;
 import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
+import misc.Pair;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class Board {
+public class Board implements Serializable{
     private Piece[][] board;
 
     private final int dimX;
@@ -28,7 +30,9 @@ public class Board {
     private Position whiteKingPos;
     private Position blackKingPos;
 
-    private MoveHistory moveHistory = new MoveHistory();
+    private Deque<Pair<Position, Position>> kingPosHistory = new LinkedList<>();
+
+    private UndoTracker undoTracker = new UndoTracker();
 
     private static final String hPadding = " ";
     private static final String vPadding = "";
@@ -46,7 +50,12 @@ public class Board {
     }
 
     public void undo (int level) {
-        moveHistory.undo(board, level);
+        undoTracker.undo(board, level);
+        for (int i = 0; i < level; i++) {
+            Pair<Position, Position> kingPositions = kingPosHistory.pop();
+            whiteKingPos = kingPositions.getFirst();
+            blackKingPos = kingPositions.getSecond();
+        }
     }
 
     private static final Pattern moveTimePattern = Pattern.compile(   "^" + // line start
@@ -80,7 +89,7 @@ public class Board {
                 Piece pieceTypeAndColor = notation.getPieceTypeAndColor(row[x]); // "7 - y" because the y axis is inverted in the source file
                 if (pieceTypeAndColor.getType() == PieceType.KING && pieceTypeAndColor.getColor() == PieceColor.WHITE) {
                     if (whiteKingPos == null) {
-                        whiteKingPos = new Position(x, y);
+                        whiteKingPos = new Position(x, 7 - y);
                     } else {
                         throw new ChessException("Cannot have more than one kings (on board file " + path + ")!");
                     }
@@ -178,14 +187,19 @@ public class Board {
         return false;
     }
     
-    public Set<Move> getAllPossibleMoves () {
+    public Set<Move> getAllPossibleMoves (PieceColor color) {
         Set<Move> moves = new HashSet<>();
 
         for (int y = 0; y < board.length; y++) {
             for (int x = 0; x < board[y].length; x++) {
-                for (Position possiblePosition : getPieceInSquare(new Position(x, y)).getPossiblePositions(this, new Position(x, y))) {
+                Piece piece = getPieceInSquare(new Position(x, y));
+                if (piece.getColor() != color) {
+                    continue;
+                }
+
+                for (Position possiblePosition : piece.getPossiblePositions(this, new Position(x, y))) {
                     if (!isMoveLegal(new Move(new Position(x, y), possiblePosition, this))) {
-                        new ChessException("Warning! not legal: " + new Move(new Position(x, y), possiblePosition, this) + "!").printStackTrace();
+//                        new ChessException("Warning! not legal: " + new Move(new Position(x, y), possiblePosition, this) + "!").printStackTrace();
                     } else {
                         moves.add(new Move(new Position(x, y), possiblePosition, this));
                     }
@@ -224,8 +238,13 @@ public class Board {
 
         broadcastMove(move);
         getPieceInSquare(destination).onMoved(move, this);
-        moveHistory.addMove(move);
+        registerUndoState(move);
         moveRookIfCastling(move, castling);
+    }
+
+    private void registerUndoState (Move move) {
+        undoTracker.addMove(move);
+        kingPosHistory.push(new Pair<>(whiteKingPos, blackKingPos));
     }
 
     private void moveRookIfCastling (Move move, boolean castling) {
@@ -272,9 +291,33 @@ public class Board {
         }
 
         Board another = new Board(board, whiteKingPos, blackKingPos);
-        another.moveHistory = moveHistory.deepCopy();
+        another.undoTracker = undoTracker.deepCopy();
 
         return another;
+    }
+
+    public boolean isCheck (PieceColor color) {
+        Position position;
+        switch (color) {
+            case WHITE:
+                position = whiteKingPos;
+                break;
+            case BLACK:
+                position = blackKingPos;
+                break;
+            default:
+                throw new ChessException("Cannot use NO_COLOR in this context!");
+        }
+
+        return isSquareUnderThreat(position);
+    }
+
+    public boolean isCheckMate (PieceColor color) {
+        return isCheck(color) && getAllPossibleMoves(color).size() == 0;
+    }
+
+    public boolean isDraw (PieceColor color) {
+        return !isCheck(color) && getAllPossibleMoves(color).size() == 0;
     }
 
     @Override

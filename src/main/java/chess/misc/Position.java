@@ -2,9 +2,10 @@ package chess.misc;
 
 import misc.Pair;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
-public class Position extends Pair<Integer, Integer> {
+public class Position extends Pair<Integer, Integer> implements Serializable {
     private static final Pattern stringPattern = Pattern.compile("^[a-hA-H]\\d$");
 
     public Position (int x, int y) {

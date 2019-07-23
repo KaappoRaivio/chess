@@ -4,9 +4,10 @@ import chess.board.Board;
 import chess.misc.Position;
 import chess.piece.basepiece.Piece;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Move {
+public class Move implements Serializable {
 
     private final Position origin;
     private final Position destination;

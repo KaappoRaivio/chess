@@ -1,9 +1,10 @@
 package misc;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Pair<K, V> {
+public class Pair<K, V> implements Serializable {
     private final K first;
     private final V second;
 

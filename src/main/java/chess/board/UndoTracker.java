@@ -7,9 +7,10 @@ import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceType;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class MoveHistory {
+public class UndoTracker implements Serializable {
     private Deque<Move> moves = new LinkedList<>();
 
     public void addMove (Move move) {
@@ -22,7 +23,7 @@ public class MoveHistory {
         try {
             lastMove = moves.pop();
         } catch (NoSuchElementException e) {
-            throw new ChessException("MoveHistory is empty!");
+            throw new ChessException("UndoTracker is empty!");
         }
 
         Position origin = lastMove.getOrigin();
@@ -49,13 +50,13 @@ public class MoveHistory {
         }
     }
 
-    public MoveHistory deepCopy () {
+    public UndoTracker deepCopy () {
         Queue<Move> tempBuffer = new LinkedList<>();
         while (!moves.isEmpty()) {
             tempBuffer.add(moves.remove());
         }
 
-        MoveHistory another = new MoveHistory();
+        UndoTracker another = new UndoTracker();
         while (!tempBuffer.isEmpty()) {
             another.moves.add(tempBuffer.peek());
             moves.add(tempBuffer.remove());

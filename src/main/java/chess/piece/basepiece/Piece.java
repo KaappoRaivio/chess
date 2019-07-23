@@ -5,11 +5,12 @@ import chess.misc.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Set;
 
-abstract public class Piece {
+abstract public class Piece implements Serializable {
     private PieceType type;
     protected PieceColor color;
     private boolean hasMoved;

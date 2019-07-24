@@ -6,7 +6,10 @@ import chess.misc.Position;
 import chess.move.Move;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,6 +19,7 @@ abstract public class Piece implements Serializable {
     private boolean hasMoved;
     private String symbol;
     private int value;
+    protected Deque<Move> lastMoveHistory = new LinkedList<>();
 
     public Piece (PieceType type, PieceColor color, String symbol, int value) {
         if (color == PieceColor.NO_COLOR ^ type == PieceType.NO_PIECE) {
@@ -32,9 +36,11 @@ abstract public class Piece implements Serializable {
 
     public void onMoved (Move move, Board board) {
         setHasMoved(true);
+        lastMoveHistory.push(move);
     }
 
     public void onAnotherPieceMoved (Move move, Board board) {
+        lastMoveHistory.push(null);
     }
 
     public PieceType getType () {
@@ -85,7 +91,14 @@ abstract public class Piece implements Serializable {
         this.hasMoved = hasMoved;
     }
 
-    public void setAmountOfMovesSinceLastMoving (int amountOfMovesSinceLastMoving) { }
+    public void addLastMove (Move move) {
+        lastMoveHistory.push(move);
+    }
+    
+    public void undoLastMove () {
+        lastMoveHistory.pop();
+    }
+
 
     public Piece deepCopy () {
         try {
@@ -103,5 +116,9 @@ abstract public class Piece implements Serializable {
 
     public int getValue () {
         return value;
+    }
+
+    public Move getLastMove () {
+        return lastMoveHistory.peekLast();
     }
 }

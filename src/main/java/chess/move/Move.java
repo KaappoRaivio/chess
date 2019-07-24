@@ -17,21 +17,32 @@ public class Move implements Serializable {
     private final boolean hasOriginPieceMovedBefore;
     private final boolean hasDestinationPieceMovedBefore;
 
+    private final Move lastMoveOfOrigin;
+    private final Move lastMoveOfDestination;
+
 
     public Move (String move, Board board) {
         this(Position.fromString(move.substring(0, 2)), Position.fromString(move.substring(2)), board);
     }
 
     public Move (Position origin, Position destination, Board board) {
-        this(origin, destination, board.getPieceInSquare(destination), board.getPieceInSquare(origin).hasMoved(), board.getPieceInSquare(origin).hasMoved());
+        this(origin,
+            destination,
+            board.getPieceInSquare(destination),
+            board.getPieceInSquare(origin).hasMoved(),
+            board.getPieceInSquare(origin).hasMoved(),
+            board.getPieceInSquare(origin).getLastMove(),
+            board.getPieceInSquare(destination).getLastMove());
     }
 
-    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore) {
+    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore, Move lastMoveOfOrigin, Move lastMoveOfDestination) {
         this.origin = origin;
         this.destination = destination;
         this.pieceUnderDestination = pieceUnderDestination;
         this.hasOriginPieceMovedBefore = hasOriginPieceMovedBefore;
         this.hasDestinationPieceMovedBefore = hasDestinationPieceMovedBefore;
+        this.lastMoveOfOrigin = lastMoveOfOrigin;
+        this.lastMoveOfDestination = lastMoveOfDestination;
     }
 
     public Position getOrigin () {
@@ -52,6 +63,14 @@ public class Move implements Serializable {
 
     public boolean hasDestinationPieceMovedBefore () {
         return hasDestinationPieceMovedBefore;
+    }
+
+    public Move getLastMoveOfOrigin () {
+        return lastMoveOfOrigin;
+    }
+
+    public Move getLastMoveOfDestination () {
+        return lastMoveOfDestination;
     }
 
     public Move deepCopy () {

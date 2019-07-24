@@ -6,6 +6,7 @@ import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Runner {
     private Board board;
@@ -21,9 +22,9 @@ public class Runner {
 
     }
 
-    public PieceColor play () {
-        PieceColor turn = PieceColor.WHITE;
-        int moveCount = 1;
+    public PieceColor play (PieceColor initialTurn) {
+        PieceColor turn = initialTurn;
+        int moveCount = initialTurn == PieceColor.WHITE ? 1 : 2;
         for (CapableOfPlaying capableOfPlaying : players) {
             capableOfPlaying.updateValues(board.deepCopy(), turn, moveCount);
         }
@@ -31,6 +32,13 @@ public class Runner {
 
         while (true) {
             CapableOfPlaying currentPlayer = players[(moveCount + 1) % 2];
+            if (board.isCheckMate(currentPlayer.getColor())) {
+                System.out.println("=== === Checkmate! === ===");
+                System.out.println(board);
+                System.out.println(currentPlayer.getColor().invert() + " wins!");
+                break;
+            }
+
             ui.commit();
 
             while (true) {
@@ -40,9 +48,10 @@ public class Runner {
                     System.out.println(move);
                     board.makeMove(move);
                     break;
-                } catch (ChessException e) {
+                } catch (RuntimeException e) {
                     e.printStackTrace();
                     System.out.println("Move is invalid!");
+                    new Scanner(System.in).nextLine();
                 }
             }
 
@@ -56,12 +65,7 @@ public class Runner {
             ui.updateValues(board, turn, moveCount);
 
 
-            if (board.isCheckMate(turn.invert())) {
-                System.out.println("=== === Checkmate! === ===");
-                System.out.println(board);
-                System.out.println(turn + " wins!");
-                break;
-            }
+
         }
 
         return turn;

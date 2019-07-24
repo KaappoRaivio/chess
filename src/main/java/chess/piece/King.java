@@ -48,39 +48,54 @@ public class King extends Piece {
     }
 
     private Set<Position> handleKingSideCastling (Board board, Position position) {
-        Piece supposedRook = board.getPieceInSquare(position.offsetX(3));
-        if (hasMoved() || supposedRook.getType() != PieceType.ROOK || supposedRook.hasMoved()) {
+
+        try {
+            Piece supposedRook = board.getPieceInSquare(position.offsetX(3));
+
+            if (hasMoved() || supposedRook.getType() != PieceType.ROOK || supposedRook.hasMoved()) {
+                return Collections.emptySet();
+            }
+
+            if (board.isSquareUnderThreat(position)
+                    || board.isSquareUnderThreat(position.offsetX(1))
+                    || board.isSquareUnderThreat(position.offsetX(2))
+                    || !board.isSquareEmpty(position.offsetX(1))
+                    || !board.isSquareEmpty(position.offsetX(2))) {
+                return Collections.emptySet();
+            }
+
+            return Set.of(position.offsetX(2));
+        } catch (ChessException e) {
+            System.out.println("No luck!");
             return Collections.emptySet();
         }
 
-        if (board.isSquareUnderThreat(position) || board.isSquareUnderThreat(position.offsetX(1)) || board.isSquareUnderThreat(position.offsetX(2))) {
-            return Collections.emptySet();
-        }
 
-        return Set.of(position.offsetX(2));
     }
 
     private Set<Position> handleQueenSideCastling (Board board, Position position) {
-        Piece supposedRook = board.getPieceInSquare(position.offsetX(-4));
-        if (hasMoved() || supposedRook.getType() != PieceType.ROOK || supposedRook.hasMoved()) {
+
+        try {
+            Piece supposedRook = board.getPieceInSquare(position.offsetX(-4));
+
+            if (hasMoved() || supposedRook.getType() != PieceType.ROOK || supposedRook.hasMoved()) {
+                return Collections.emptySet();
+            }
+
+            if (board.isSquareUnderThreat(position)
+                    || board.isSquareUnderThreat(position.offsetX(-1))
+                    || board.isSquareUnderThreat(position.offsetX(-2))
+                    || !board.isSquareUnderThreat(position.offsetX(-1))
+                    || !board.isSquareUnderThreat(position.offsetX(-2))
+                    || !board.isSquareUnderThreat(position.offsetX(-3))) { // Rook's path can be threatened, so no threat check for position.offsetX(-3)
+                return Collections.emptySet();
+            }
+
+            return Set.of(position.offsetX(-2));
+        } catch (ChessException e) {
+            System.out.println("No luck!");
             return Collections.emptySet();
         }
-
-        if (board.isSquareUnderThreat(position) || board.isSquareUnderThreat(position.offsetX(-1)) || board.isSquareUnderThreat(position.offsetX(-2))) {
-            return Collections.emptySet();
-        }
-
-        return Set.of(position.offsetX(-2));
     }
 
-    private Position getStartingPosition (PieceColor color) {
-        switch (color) {
-            case WHITE:
-                return Position.fromString("E1");
-            case BLACK:
-                return Position.fromString("E8");
-            default:
-                throw new ChessException("Shouldn't happen. If does, you have broken something!");
-        }
-    }
 }

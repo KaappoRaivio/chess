@@ -12,12 +12,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Pawn extends Piece {
-    private int amountOfMovesSinceLastMoving; //  Used for en passant
+
 
     public Pawn (PieceColor color) {
         super(PieceType.PAWN, color, color == PieceColor.WHITE ? "♙" : "♟", 1);
-
-        amountOfMovesSinceLastMoving = -1;
     }
 
     @Override
@@ -90,32 +88,15 @@ public class Pawn extends Piece {
         return positions;
     }
 
-    @Override
-    public void onMoved (Move move, Board board) {
-        super.onMoved(move, board);
-
-        amountOfMovesSinceLastMoving = 0;
-    }
-
-    @Override
-    public void onAnotherPieceMoved (Move move, Board board) {
-        super.onAnotherPieceMoved(move, board);
-        amountOfMovesSinceLastMoving += 1;
-    }
-
     private boolean isEligibleForEnPassant () {
-        return amountOfMovesSinceLastMoving == 0;
-    }
-
-    @Override
-    public void setAmountOfMovesSinceLastMoving (int amountOfMovesSinceLastMoving) {
-        this.amountOfMovesSinceLastMoving = amountOfMovesSinceLastMoving;
+        return getLastMove() != null && Math.abs(getLastMove().getOrigin().getY() - getLastMove().getDestination().getY()) == 2;
     }
 
     @Override
     public Piece deepCopy () {
-        Pawn another = (Pawn) super.deepCopy();
-        another.amountOfMovesSinceLastMoving = amountOfMovesSinceLastMoving;
-        return another;
+        Pawn piece = (Pawn) super.deepCopy();
+        piece.lastMoveHistory = lastMoveHistory;
+
+        return piece;
     }
 }

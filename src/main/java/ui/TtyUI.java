@@ -36,6 +36,7 @@ public class TtyUI implements UI {
     @Override
     public void commit () {
         System.out.println(turn + "'s move, " + OrdinalConverter.toOrdinal(moveCount / 2) + " move:");
+        System.out.println(board.isCheck(turn) + ", " + board.isCheck(turn.invert()));
         if (board.isCheck(turn)) {
             System.out.println("Check!");
         }

@@ -28,11 +28,15 @@ public class NoPiece extends Piece {
 
     @Override
     public boolean equals (Object o) {
-        return o.getClass() == getClass();
+        try {
+            return o.getClass().equals(getClass());
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     @Override
-    public int hashCode () {
-        return super.hashCode();
+    public Piece deepCopy () {
+        return this; // no need to deepcopy
     }
 }

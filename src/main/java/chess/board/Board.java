@@ -120,7 +120,6 @@ public class Board implements Serializable{
                 Piece piece = board.getPieceInSquare(position);
                 if (amount >= 0) {
                     piece.setHasMoved(true);
-                    piece.setAmountOfMovesSinceLastMoving(amount);
                 }
             }
         }
@@ -219,6 +218,8 @@ public class Board implements Serializable{
     }
 
     private void makeDummyMove (Move move) {
+        registerUndoState(move);
+
         Position origin = move.getOrigin();
         Position destination = move.getDestination();
         if (getPieceInSquare(origin).getType() == PieceType.KING) {
@@ -233,12 +234,12 @@ public class Board implements Serializable{
 
         boolean castling = isCastling(move);
 
+        broadcastMove(move);
+
         board[destination.getY()][destination.getX()] = getPieceInSquare(origin);
         board[origin.getY()][origin.getX()] = new NoPiece();
 
-        broadcastMove(move);
         getPieceInSquare(destination).onMoved(move, this);
-        registerUndoState(move);
         moveRookIfCastling(move, castling);
     }
 
@@ -278,7 +279,12 @@ public class Board implements Serializable{
     private void broadcastMove (Move move) {
         for (int y = 0; y < dimY; y++) {
             for (int x = 0; x < dimX; x++) {
-                getPieceInSquare(new Position(x, y)).onAnotherPieceMoved(move, this);
+                Position position = new Position(x, y);
+                if (!move.getOrigin().equals(position)) {
+                    getPieceInSquare(position).onAnotherPieceMoved(move, this);
+                } else {
+                    getPieceInSquare(position).onMoved(move, this);
+                }
             }
         }
     }
@@ -342,5 +348,13 @@ public class Board implements Serializable{
         }
 
         return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).append("\n").toString();
+    }
+
+    public Position getWhiteKingPos () {
+        return whiteKingPos;
+    }
+
+    public Position getBlackKingPos () {
+        return blackKingPos;
     }
 }

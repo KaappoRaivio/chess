@@ -1,6 +1,6 @@
 package chess.board;
 
-import chess.misc.ChessException;
+import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.piece.King;
 import chess.piece.Knight;

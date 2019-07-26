@@ -1,6 +1,7 @@
 package chess.board;
 
-import chess.misc.ChessException;
+import chess.misc.Counter;
+import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
 import chess.piece.NoPiece;
@@ -18,7 +19,7 @@ public class UndoTracker implements Serializable {
     }
 
 
-    private void undoOneLevel (Piece[][] buffer) {
+    void undoOneLevel (Piece[][] buffer) {
         Move lastMove;
         try {
             lastMove = moves.pop();

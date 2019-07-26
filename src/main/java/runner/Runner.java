@@ -1,11 +1,9 @@
 package runner;
 
 import chess.board.Board;
-import chess.misc.ChessException;
 import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Runner {

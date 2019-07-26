@@ -7,6 +7,7 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Bishop extends Piece {
@@ -16,7 +17,7 @@ public class Bishop extends Piece {
 
     @Override
     public Set<Position> getPossiblePositions (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         positions.addAll(handleUpRight(board, position));
         positions.addAll(handleUpLeft(board, position));
@@ -27,7 +28,7 @@ public class Bishop extends Piece {
     }
 
     private Set<Position> handleUpRight (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
         int checkX = position.getX() + 1;
         int checkY = position.getY() + 1;
 
@@ -51,7 +52,7 @@ public class Bishop extends Piece {
     }
 
     private Set<Position> handleUpLeft (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
         int checkX = position.getX() - 1;
         int checkY = position.getY() + 1;
 
@@ -75,7 +76,7 @@ public class Bishop extends Piece {
     }
 
     private Set<Position> handleDownLeft (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
         int checkX = position.getX() - 1;
         int checkY = position.getY() - 1;
 
@@ -99,7 +100,7 @@ public class Bishop extends Piece {
     }
 
     private Set<Position> handleDownRight (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
         int checkX = position.getX() + 1;
         int checkY = position.getY() - 1;
 

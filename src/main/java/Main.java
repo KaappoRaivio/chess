@@ -1,24 +1,19 @@
 import chess.board.Board;
 import chess.board.BoardNotation;
-import chess.misc.ChessException;
-import chess.misc.Position;
 import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
-import misc.Saver;
-import players.Player;
-import players.RandomAI;
-import runner.CapableOfPlaying;
-import runner.Runner;
-import runner.UI;
-import ui.TtyUI;
 
 public class Main {
     public static void main (String[] args) {
-        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos5.txt", BoardNotation.DEFAULT_NOTATION);
+        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
+
         System.out.println(board);
-        board.makeMove(new Move("d2d4", board));
-        board.undo(1);
-        board.makeMove(new Move("d2d4", board));
+        board.makeMove(new Move("g1f3", board));
+        board.makeMove(new Move("f3g1", board));
+        board.makeMove(new Move("g1f3", board));
+        board.makeMove(new Move("f3g1", board));
+        board.makeMove(new Move("g1f3", board));
+        board.makeMove(new Move("f3g1", board));
 //        board.undo(1);
 //        board.makeMove(new Move("d2d4", board));
 //        board.makeMove(new Move("c8c7", board));

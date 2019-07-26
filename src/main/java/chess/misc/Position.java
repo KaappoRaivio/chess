@@ -1,5 +1,6 @@
 package chess.misc;
 
+import chess.misc.exceptions.ChessException;
 import misc.Pair;
 
 import java.io.Serializable;

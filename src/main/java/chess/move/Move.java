@@ -3,6 +3,7 @@ package chess.move;
 import chess.board.Board;
 import chess.misc.Position;
 import chess.piece.basepiece.Piece;
+import chess.piece.basepiece.PieceColor;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -17,8 +18,7 @@ public class Move implements Serializable {
     private final boolean hasOriginPieceMovedBefore;
     private final boolean hasDestinationPieceMovedBefore;
 
-    private final Move lastMoveOfOrigin;
-    private final Move lastMoveOfDestination;
+    private final PieceColor turn;
 
 
     public Move (String move, Board board) {
@@ -31,18 +31,16 @@ public class Move implements Serializable {
             board.getPieceInSquare(destination),
             board.getPieceInSquare(origin).hasMoved(),
             board.getPieceInSquare(origin).hasMoved(),
-            board.getPieceInSquare(origin).getLastMove(),
-            board.getPieceInSquare(destination).getLastMove());
+                board.getPieceInSquare(origin).getColor());
     }
 
-    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore, Move lastMoveOfOrigin, Move lastMoveOfDestination) {
+    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore, PieceColor turn) {
         this.origin = origin;
         this.destination = destination;
         this.pieceUnderDestination = pieceUnderDestination;
         this.hasOriginPieceMovedBefore = hasOriginPieceMovedBefore;
         this.hasDestinationPieceMovedBefore = hasDestinationPieceMovedBefore;
-        this.lastMoveOfOrigin = lastMoveOfOrigin;
-        this.lastMoveOfDestination = lastMoveOfDestination;
+        this.turn = turn;
     }
 
     public Position getOrigin () {
@@ -65,17 +63,15 @@ public class Move implements Serializable {
         return hasDestinationPieceMovedBefore;
     }
 
-    public Move getLastMoveOfOrigin () {
-        return lastMoveOfOrigin;
-    }
-
-    public Move getLastMoveOfDestination () {
-        return lastMoveOfDestination;
+    public PieceColor getTurn () {
+        return turn;
     }
 
     public Move deepCopy () {
         return this;
     }
+
+
 
     @Override
     public boolean equals (Object o) {

@@ -7,6 +7,7 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Rook extends Piece {
@@ -16,7 +17,7 @@ public class Rook extends Piece {
 
     @Override
     public Set<Position> getPossiblePositions (Board board, Position position) {
-        Set<Position> list = new HashSet<>();
+        Set<Position> list = new LinkedHashSet<>();
 
         list.addAll(handleUp(board, position));
         list.addAll(handleDown(board, position));
@@ -27,7 +28,7 @@ public class Rook extends Piece {
     }
 
     private Set<Position> handleUp (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         for (Position pos = position.offsetY(1, false); pos.getY() < board.getDimY(); pos = pos.offsetY(1, false)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -46,7 +47,7 @@ public class Rook extends Piece {
     }
 
     private Set<Position> handleDown (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         for (Position pos = position.offsetY(-1, false); pos.getY() >= 0; pos = pos.offsetY(-1, false)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -65,7 +66,7 @@ public class Rook extends Piece {
     }
 
     private Set<Position> handleLeft (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         for (Position pos = position.offsetX(1, false); pos.getX() < board.getDimX(); pos = pos.offsetX(1, false)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -84,7 +85,7 @@ public class Rook extends Piece {
     }
 
     private Set<Position> handleRight (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         for (Position pos = position.offsetX(-1, false); pos.getX() >= 0; pos = pos.offsetX(-1, false)) {
             Piece piece = board.getPieceInSquare(pos);

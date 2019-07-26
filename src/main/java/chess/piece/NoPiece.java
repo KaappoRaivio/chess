@@ -1,7 +1,7 @@
 package chess.piece;
 
 import chess.board.Board;
-import chess.misc.ChessException;
+import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
 import chess.piece.basepiece.Piece;

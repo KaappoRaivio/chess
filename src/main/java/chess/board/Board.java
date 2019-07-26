@@ -1,6 +1,7 @@
 package chess.board;
 
-import chess.misc.ChessException;
+import chess.misc.Counter;
+import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
 import chess.piece.NoPiece;
@@ -14,15 +15,13 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Board implements Serializable{
     private Piece[][] board;
+    private PieceColor turn;
 
     private final int dimX;
     private final int dimY;
@@ -31,8 +30,9 @@ public class Board implements Serializable{
     private Position blackKingPos;
 
     private Deque<Pair<Position, Position>> kingPosHistory = new LinkedList<>();
-
     private UndoTracker undoTracker = new UndoTracker();
+
+    private Counter<Board> repetitionTracker = new Counter<>();
 
     private static final String hPadding = " ";
     private static final String vPadding = "";
@@ -40,22 +40,30 @@ public class Board implements Serializable{
 
 
 
-    private Board (Piece[][] board, Position whiteKingPos, Position blackKingPos) {
+    private Board (Piece[][] board, PieceColor turn, Position whiteKingPos, Position blackKingPos) {
         this.board = board;
         this.dimX = board[0].length;
         this.dimY = board.length;
+        this.turn = turn;
 
         this.whiteKingPos = whiteKingPos;
         this.blackKingPos = blackKingPos;
+
     }
 
     public void undo (int level) {
-        undoTracker.undo(board, level);
+
+
         for (int i = 0; i < level; i++) {
+            repetitionTracker.subtract(this);
+            undoTracker.undoOneLevel(board);
+
             Pair<Position, Position> kingPositions = kingPosHistory.pop();
             whiteKingPos = kingPositions.getFirst();
             blackKingPos = kingPositions.getSecond();
         }
+
+        turn = level % 2 == 0 ? turn.invert() : turn;
     }
 
     private static final Pattern moveTimePattern = Pattern.compile(   "^" + // line start
@@ -109,7 +117,20 @@ public class Board implements Serializable{
             throw new ChessException("Couldn't find kings from board file " + path + "!");
         }
 
-        Board board = new Board(boardBuffer, whiteKingPos, blackKingPos);
+        PieceColor turn = PieceColor.WHITE;
+
+        loop: for (String line : lines) {
+            switch (line.toUpperCase()) {
+                case "BLACK":
+                    turn = PieceColor.BLACK;
+                    break loop;
+                case "WHITE":
+                    turn = PieceColor.WHITE;
+                    break loop;
+            }
+        }
+
+        Board board = new Board(boardBuffer, turn, whiteKingPos, blackKingPos);
 
         for (String line : lines) {
             if (moveTimePattern.matcher(line).matches()) {
@@ -174,20 +195,23 @@ public class Board implements Serializable{
     }
 
     public boolean isMoveLegal (Move move) {
-        boolean result = getPieceInSquare(move.getOrigin()).getPossiblePositions(this, move.getOrigin()).contains(move.getDestination());
-        PieceColor color = getPieceInSquare(move.getOrigin()).getColor();
+        boolean result = turn == move.getTurn() && getPieceInSquare(move.getOrigin()).getPossiblePositions(this, move.getOrigin()).contains(move.getDestination());
         if (result) {
-            makeDummyMove(move);
-            boolean isPositionLegal = !isSquareUnderThreat(color == PieceColor.WHITE ? whiteKingPos : blackKingPos); // is the player's king in check after the move?
+            executeMove(move);
+            boolean isPositionLegal = !isSquareUnderThreat(move.getTurn() == PieceColor.WHITE ? whiteKingPos : blackKingPos); // is the player's king in check after the move?
             undo(1);
 
             return isPositionLegal;
         }
         return false;
     }
-    
+
+    public Set<Move> getAllPossibleMoves () {
+        return getAllPossibleMoves(turn);
+    }
+
     public Set<Move> getAllPossibleMoves (PieceColor color) {
-        Set<Move> moves = new HashSet<>();
+        Set<Move> moves = new LinkedHashSet<>();
 
         for (int y = 0; y < board.length; y++) {
             for (int x = 0; x < board[y].length; x++) {
@@ -211,21 +235,21 @@ public class Board implements Serializable{
 
     public void makeMove (Move move) {
         if (isMoveLegal(move)) {
-            makeDummyMove(move);
+            executeMove(move);
         } else {
             throw new ChessException("Move " + move + " isn't legal for position \n" + this + "\n!");
         }
     }
 
-    private void makeDummyMove (Move move) {
+    private void executeMove (Move move) {
         registerUndoState(move);
 
         Position origin = move.getOrigin();
         Position destination = move.getDestination();
         if (getPieceInSquare(origin).getType() == PieceType.KING) {
-            if (getPieceInSquare(origin).getColor() == PieceColor.WHITE) {
+            if (move.getTurn() == PieceColor.WHITE) {
                 whiteKingPos = destination;
-            } else if (getPieceInSquare(origin).getColor() == PieceColor.BLACK) {
+            } else if (move.getTurn() == PieceColor.BLACK) {
                 blackKingPos = destination;
             } else {
                 throw new ChessException("King has NO_COLOR!");
@@ -239,13 +263,15 @@ public class Board implements Serializable{
         board[destination.getY()][destination.getX()] = getPieceInSquare(origin);
         board[origin.getY()][origin.getX()] = new NoPiece();
 
-        getPieceInSquare(destination).onMoved(move, this);
         moveRookIfCastling(move, castling);
+
+        turn = turn.invert();
     }
 
     private void registerUndoState (Move move) {
         undoTracker.addMove(move);
         kingPosHistory.push(new Pair<>(whiteKingPos, blackKingPos));
+        repetitionTracker.add(this);
     }
 
     private void moveRookIfCastling (Move move, boolean castling) {
@@ -256,10 +282,12 @@ public class Board implements Serializable{
 
             if (castlingDirection > 0) {
                 Position rookPos = new Position(7, origin.getY());
+                getPieceInSquare(rookPos).onMoved(move, this);
                 board[origin.getY()][origin.getX() + 1] = getPieceInSquare(rookPos);
                 board[rookPos.getY()][rookPos.getX()] = new NoPiece();
             } else if (castlingDirection < 0) {
                 Position rookPos = new Position(0, origin.getY());
+                getPieceInSquare(rookPos).onMoved(move, this);
                 board[origin.getY()][origin.getX() - 1] = getPieceInSquare(rookPos);
                 board[rookPos.getY()][rookPos.getX()] = new NoPiece();
             } else {
@@ -272,6 +300,10 @@ public class Board implements Serializable{
         return getPieceInSquare(move.getOrigin()).getType() == PieceType.KING && Math.abs(move.getOrigin().getX() - move.getDestination().getX()) == 2;
     }
 
+    private boolean resetsFiftyMoveRule (Move move) {
+        return getPieceInSquare(move.getOrigin()).getType() == PieceType.PAWN || getPieceInSquare(move.getDestination()).getType() != PieceType.NO_PIECE;
+    }
+
     private int getCastlingDirection (Move move) {
         return Integer.compare(move.getDestination().getX() - move.getOrigin().getX(), 0);
     }
@@ -280,10 +312,10 @@ public class Board implements Serializable{
         for (int y = 0; y < dimY; y++) {
             for (int x = 0; x < dimX; x++) {
                 Position position = new Position(x, y);
-                if (!move.getOrigin().equals(position)) {
-                    getPieceInSquare(position).onAnotherPieceMoved(move, this);
-                } else {
+                if (move.getOrigin().equals(position)) {
                     getPieceInSquare(position).onMoved(move, this);
+                } else {
+                    getPieceInSquare(position).onAnotherPieceMoved(move, this);
                 }
             }
         }
@@ -296,7 +328,7 @@ public class Board implements Serializable{
             if (board[y].length >= 0) System.arraycopy(board[y], 0, newBuffer[y], 0, board[y].length);
         }
 
-        Board another = new Board(board, whiteKingPos, blackKingPos);
+        Board another = new Board(board, turn, whiteKingPos, blackKingPos);
         another.undoTracker = undoTracker.deepCopy();
 
         return another;
@@ -356,5 +388,11 @@ public class Board implements Serializable{
 
     public Position getBlackKingPos () {
         return blackKingPos;
+    }
+
+    @Override
+    public int hashCode () {
+//        return getAllPossibleMoves().hashCode();
+        return Arrays.hashCode(board);
     }
 }

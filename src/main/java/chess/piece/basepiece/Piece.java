@@ -1,12 +1,11 @@
 package chess.piece.basepiece;
 
 import chess.board.Board;
-import chess.misc.ChessException;
+import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Deque;
 import java.util.LinkedList;

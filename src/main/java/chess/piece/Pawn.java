@@ -1,14 +1,13 @@
 package chess.piece;
 
 import chess.board.Board;
-import chess.misc.ChessException;
+import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
-import chess.move.Move;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Pawn extends Piece {
@@ -20,7 +19,7 @@ public class Pawn extends Piece {
 
     @Override
     public Set<Position> getPossiblePositions (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         positions.addAll(handleStraightAhead(board, position));
         positions.addAll(handleCapture(board, position));
@@ -30,7 +29,7 @@ public class Pawn extends Piece {
     }
 
     private Set<Position> handleStraightAhead (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
         try {
             if (board.isSquareEmpty(position.offsetY(getForwardDirection()))) {
                 positions.add(position.offsetY(getForwardDirection()));
@@ -47,7 +46,7 @@ public class Pawn extends Piece {
     }
 
     private Set<Position> handleCapture (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         try {
             if (board.getPieceInSquare(position.offset(1, getForwardDirection())).getColor() == color.invert()) {
@@ -65,7 +64,7 @@ public class Pawn extends Piece {
     }
 
     private Set<Position> handleEnPassant (Board board, Position position) {
-        Set<Position> positions = new HashSet<>();
+        Set<Position> positions = new LinkedHashSet<>();
 
         try {
             Piece piece = board.getPieceInSquare(position.offsetX(1));

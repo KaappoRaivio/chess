@@ -1,6 +1,6 @@
 package chess.board;
 
-import chess.misc.ChessException;
+import chess.misc.exceptions.ChessException;
 import chess.piece.*;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;

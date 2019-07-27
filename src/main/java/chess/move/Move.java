@@ -4,6 +4,7 @@ import chess.board.Board;
 import chess.misc.Position;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
+import chess.piece.basepiece.PieceType;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -19,7 +20,8 @@ public class Move implements Serializable {
     private final boolean hasDestinationPieceMovedBefore;
 
     private final PieceColor turn;
-
+    private final boolean capture;
+    private final boolean pawnMove;
 
     public Move (String move, Board board) {
         this(Position.fromString(move.substring(0, 2)), Position.fromString(move.substring(2)), board);
@@ -31,16 +33,20 @@ public class Move implements Serializable {
             board.getPieceInSquare(destination),
             board.getPieceInSquare(origin).hasMoved(),
             board.getPieceInSquare(origin).hasMoved(),
-                board.getPieceInSquare(origin).getColor());
+                board.getPieceInSquare(origin).getColor(),
+                !board.isSquareEmpty(destination),
+                board.getPieceInSquare(origin).getType() == PieceType.PAWN);
     }
 
-    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore, PieceColor turn) {
+    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore, PieceColor turn, boolean capture, boolean pawnMove) {
         this.origin = origin;
         this.destination = destination;
         this.pieceUnderDestination = pieceUnderDestination;
         this.hasOriginPieceMovedBefore = hasOriginPieceMovedBefore;
         this.hasDestinationPieceMovedBefore = hasDestinationPieceMovedBefore;
         this.turn = turn;
+        this.capture = capture;
+        this.pawnMove = pawnMove;
     }
 
     public Position getOrigin () {
@@ -71,7 +77,13 @@ public class Move implements Serializable {
         return this;
     }
 
+    public boolean isCapture () {
+        return capture;
+    }
 
+    public boolean isPawnMove () {
+        return pawnMove;
+    }
 
     @Override
     public boolean equals (Object o) {

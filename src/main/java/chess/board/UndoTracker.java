@@ -1,6 +1,5 @@
 package chess.board;
 
-import chess.misc.Counter;
 import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
@@ -49,7 +48,12 @@ public class UndoTracker implements Serializable {
 
         for (int y = 0; y < buffer.length; y++) {
             for (int x = 0; x < buffer[y].length; x++) {
-                buffer[y][x].undoLastMove();
+                try {
+                    buffer[y][x].undoLastMove();
+                } catch (NoSuchElementException e) {
+                    System.out.println(x + ", " + y);
+                    throw e;
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package chess.board;
 
-import chess.misc.Counter;
 import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
@@ -9,6 +8,7 @@ import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 import misc.Pair;
+import misc.Saver;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -29,10 +29,14 @@ public class Board implements Serializable{
     private Position whiteKingPos;
     private Position blackKingPos;
 
+
     private Deque<Pair<Position, Position>> kingPosHistory = new LinkedList<>();
     private UndoTracker undoTracker = new UndoTracker();
+    private RepetitionTracker repetitionTracker = new RepetitionTracker();
 
-    private Counter<Board> repetitionTracker = new Counter<>();
+    private int moveCount;
+    private Deque<Integer> movesSinceCaptureOrPawnMove = new LinkedList<>();
+
 
     private static final String hPadding = " ";
     private static final String vPadding = "";
@@ -40,7 +44,7 @@ public class Board implements Serializable{
 
 
 
-    private Board (Piece[][] board, PieceColor turn, Position whiteKingPos, Position blackKingPos) {
+    private Board (Piece[][] board, PieceColor turn, Position whiteKingPos, Position blackKingPos, int moveCount, int movesSinceCaptureOrPawnMove) {
         this.board = board;
         this.dimX = board[0].length;
         this.dimY = board.length;
@@ -49,10 +53,11 @@ public class Board implements Serializable{
         this.whiteKingPos = whiteKingPos;
         this.blackKingPos = blackKingPos;
 
+        this.moveCount = moveCount;
+        this.movesSinceCaptureOrPawnMove.push(movesSinceCaptureOrPawnMove);
     }
 
     public void undo (int level) {
-
 
         for (int i = 0; i < level; i++) {
             repetitionTracker.subtract(this);
@@ -61,6 +66,8 @@ public class Board implements Serializable{
             Pair<Position, Position> kingPositions = kingPosHistory.pop();
             whiteKingPos = kingPositions.getFirst();
             blackKingPos = kingPositions.getSecond();
+
+            movesSinceCaptureOrPawnMove.pop();
         }
 
         turn = level % 2 == 1 ? turn.invert() : turn;
@@ -72,6 +79,8 @@ public class Board implements Serializable{
                                                                             "[-]?\\d" +  // possibly a minus sign, and a single number
                                                                             "$", // Line end
             Pattern.MULTILINE);
+
+
 
     public static Board fromFile (String path, BoardNotation notation) {
         String data;
@@ -130,7 +139,25 @@ public class Board implements Serializable{
             }
         }
 
-        Board board = new Board(boardBuffer, turn, whiteKingPos, blackKingPos);
+        int moveCount = 0;
+
+        for (String line : lines) {
+            if (line.toUpperCase().startsWith("MOVECOUNT")) {
+                moveCount = Integer.parseInt(line.split(" +")[1]);
+                break;
+            }
+        }
+
+        int movesSinceCaptureOrPawnMove = moveCount;
+
+        for (String line : lines) {
+            if (line.toUpperCase().startsWith("MOVESSINCECAPTUREORPAWNMOVE")) {
+                movesSinceCaptureOrPawnMove = Integer.parseInt(line.split(" +")[1]);
+                break;
+            }
+        }
+
+        Board board = new Board(boardBuffer, turn, whiteKingPos, blackKingPos, moveCount, movesSinceCaptureOrPawnMove);
 
         for (String line : lines) {
             if (moveTimePattern.matcher(line).matches()) {
@@ -241,7 +268,7 @@ public class Board implements Serializable{
         }
     }
 
-    private void executeMove (Move move) {
+    public void executeMove (Move move) {
         registerUndoStateBeforeMove(move);
 
         Position origin = move.getOrigin();
@@ -269,6 +296,16 @@ public class Board implements Serializable{
 
         registerUndoStateAfterMove(move);
         turn = turn.invert();
+
+        moveCount += 1;
+
+
+
+        if (move.isCapture() || move.isPawnMove()) {
+            movesSinceCaptureOrPawnMove.push(0);
+        } else {
+            movesSinceCaptureOrPawnMove.push(Optional.ofNullable(movesSinceCaptureOrPawnMove.peek()).orElseThrow() + 1);
+        }
     }
 
     private void registerUndoStateBeforeMove (Move move) {
@@ -326,16 +363,7 @@ public class Board implements Serializable{
     }
 
     public Board deepCopy () {
-        Piece[][] newBuffer = new Piece[dimY][dimX];
-
-        for (int y = 0; y < board.length; y++) {
-            if (board[y].length >= 0) System.arraycopy(board[y], 0, newBuffer[y], 0, board[y].length);
-        }
-
-        Board another = new Board(board, turn, whiteKingPos, blackKingPos);
-        another.undoTracker = undoTracker.deepCopy();
-
-        return another;
+        return new Saver<Board>().deepCopy(this, Board.class);
     }
 
     public boolean isCheck (PieceColor color) {
@@ -359,7 +387,7 @@ public class Board implements Serializable{
     }
 
     public boolean isDraw () {
-        return repetitionTracker.isDraw() || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
+        return repetitionTracker.isDraw() || Optional.ofNullable(movesSinceCaptureOrPawnMove.peek()).orElseThrow() >= 50 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
     }
 
     @Override
@@ -386,13 +414,17 @@ public class Board implements Serializable{
         return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).append("\n").toString();
     }
 
-    public Position getWhiteKingPos () {
-        return whiteKingPos;
+    public Position getKingPos (PieceColor color) {
+        switch (color) {
+            case WHITE:
+                return whiteKingPos;
+            case BLACK:
+                return blackKingPos;
+            default:
+                throw new ChessException("Cannot use NO_COLOR!");
+        }
     }
 
-    public Position getBlackKingPos () {
-        return blackKingPos;
-    }
 
     @Override
     public int hashCode () {
@@ -410,5 +442,14 @@ public class Board implements Serializable{
         }
 
         return ZobristBitStrings.bitSetToInt(result);
+    }
+
+    @Override
+    public boolean equals (Object object) {
+        if (object == null) {
+            return false;
+        }
+
+        return getClass() == object.getClass() && hashCode() == object.hashCode();
     }
 }

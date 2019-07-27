@@ -9,5 +9,7 @@ k . K . . . . .
 
 WHITE
 
+MOVESSINCECAPTUREORPAWNMOVE 49
+
 D2 -1
 E4 1

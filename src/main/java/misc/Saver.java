@@ -74,7 +74,7 @@ public class Saver<T extends Serializable> implements Serializable {
         return recovered;
     }
 
-    public T deepCopy (T object) {
+    public T deepCopy (T object, Class<T> targetClass) {
         T newObject;
 
         try {
@@ -86,7 +86,13 @@ public class Saver<T extends Serializable> implements Serializable {
             InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             try {
-                newObject = (T) objectInputStream.readObject();
+                Object o = objectInputStream.readObject();
+                if (targetClass.isInstance(o)) {
+                    newObject = (T) o;
+                } else {
+                    throw new ClassNotFoundException();
+                }
+
             } catch (ClassNotFoundException | ClassCastException e) {
                 throw new RuntimeException("Exception in deepcopying " + object);
             }

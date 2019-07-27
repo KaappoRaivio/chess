@@ -63,7 +63,7 @@ public class Board implements Serializable{
             blackKingPos = kingPositions.getSecond();
         }
 
-        turn = level % 2 == 0 ? turn.invert() : turn;
+        turn = level % 2 == 1 ? turn.invert() : turn;
     }
 
     private static final Pattern moveTimePattern = Pattern.compile(   "^" + // line start
@@ -242,7 +242,7 @@ public class Board implements Serializable{
     }
 
     private void executeMove (Move move) {
-        registerUndoState(move);
+        registerUndoStateBeforeMove(move);
 
         Position origin = move.getOrigin();
         Position destination = move.getDestination();
@@ -263,36 +263,40 @@ public class Board implements Serializable{
         board[destination.getY()][destination.getX()] = getPieceInSquare(origin);
         board[origin.getY()][origin.getX()] = new NoPiece();
 
-        moveRookIfCastling(move, castling);
+        if (castling) {
+            moveRookToCastlingFormation(move);
+        }
 
+        registerUndoStateAfterMove(move);
         turn = turn.invert();
     }
 
-    private void registerUndoState (Move move) {
+    private void registerUndoStateBeforeMove (Move move) {
         undoTracker.addMove(move);
         kingPosHistory.push(new Pair<>(whiteKingPos, blackKingPos));
+    }
+
+    private void registerUndoStateAfterMove (Move move) {
         repetitionTracker.add(this);
     }
 
-    private void moveRookIfCastling (Move move, boolean castling) {
-        if (castling) {
-            int castlingDirection = getCastlingDirection(move);
+    private void moveRookToCastlingFormation (Move move) {
+        int castlingDirection = getCastlingDirection(move);
 
-            Position origin = move.getOrigin();
+        Position origin = move.getOrigin();
 
-            if (castlingDirection > 0) {
-                Position rookPos = new Position(7, origin.getY());
-                getPieceInSquare(rookPos).onMoved(move, this);
-                board[origin.getY()][origin.getX() + 1] = getPieceInSquare(rookPos);
-                board[rookPos.getY()][rookPos.getX()] = new NoPiece();
-            } else if (castlingDirection < 0) {
-                Position rookPos = new Position(0, origin.getY());
-                getPieceInSquare(rookPos).onMoved(move, this);
-                board[origin.getY()][origin.getX() - 1] = getPieceInSquare(rookPos);
-                board[rookPos.getY()][rookPos.getX()] = new NoPiece();
-            } else {
-                throw new ChessException("Error! " + move);
-            }
+        if (castlingDirection > 0) {
+            Position rookPos = new Position(7, origin.getY());
+            getPieceInSquare(rookPos).onMoved(move, this);
+            board[origin.getY()][origin.getX() + 1] = getPieceInSquare(rookPos);
+            board[rookPos.getY()][rookPos.getX()] = new NoPiece();
+        } else if (castlingDirection < 0) {
+            Position rookPos = new Position(0, origin.getY());
+            getPieceInSquare(rookPos).onMoved(move, this);
+            board[origin.getY()][origin.getX() - 1] = getPieceInSquare(rookPos);
+            board[rookPos.getY()][rookPos.getX()] = new NoPiece();
+        } else {
+            throw new ChessException("Error! " + move);
         }
     }
 
@@ -354,13 +358,13 @@ public class Board implements Serializable{
         return isCheck(color) && getAllPossibleMoves(color).size() == 0;
     }
 
-    public boolean isDraw (PieceColor color) {
-        return !isCheck(color) && getAllPossibleMoves(color).size() == 0;
+    public boolean isDraw () {
+        return repetitionTracker.isDraw() || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(hPadding).append(" a b c d e f g h").append(hPadding).append("\n").append(vPadding);
+        StringBuilder builder = new StringBuilder(vPadding).append(hPadding).append(" a b c d e f g h").append(hPadding).append("\n").append(vPadding);
         for (int y = dimY - 1; y >= 0; y--) {
             if (y < dimY - 1) {
                 builder.append("\n");
@@ -392,7 +396,19 @@ public class Board implements Serializable{
 
     @Override
     public int hashCode () {
-//        return getAllPossibleMoves().hashCode();
-        return Arrays.hashCode(board);
+        BitSet result = new BitSet(32);
+
+        for (int y = 0; y < board.length; y++) {
+            for (int x = 0; x < board[y].length; x++) {
+                Position position = new Position(x, y);
+                if (!isSquareEmpty(position)) {
+                    Piece piece = getPieceInSquare(position);
+
+                    result.xor(ZobristBitStrings.getInstance().getSet(position, piece.getIndex(this, position)));
+                }
+            }
+        }
+
+        return ZobristBitStrings.bitSetToInt(result);
     }
 }

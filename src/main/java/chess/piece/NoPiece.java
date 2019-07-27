@@ -39,4 +39,9 @@ public class NoPiece extends Piece {
     public Piece deepCopy () {
         return this; // no need to deepcopy
     }
+
+    @Override
+    public int getIndex (Board board, Position position) {
+        return 0;
+    }
 }

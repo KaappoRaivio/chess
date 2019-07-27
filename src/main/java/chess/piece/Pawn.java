@@ -92,10 +92,11 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public Piece deepCopy () {
-        Pawn piece = (Pawn) super.deepCopy();
-        piece.lastMoveHistory = lastMoveHistory;
-
-        return piece;
+    public int getIndex (Board board, Position position) {
+        if (handleEnPassant(board, position).size() > 0) {
+            return getColor() == PieceColor.WHITE ? 12 : 13;
+        } else {
+            return super.getIndex(board, position);
+        }
     }
 }

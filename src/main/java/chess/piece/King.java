@@ -66,7 +66,6 @@ public class King extends Piece {
 
             return Set.of(position.offsetX(2));
         } catch (ChessException e) {
-            System.out.println("No luck!");
             return Collections.emptySet();
         }
 
@@ -93,9 +92,19 @@ public class King extends Piece {
 
             return Set.of(position.offsetX(-2));
         } catch (ChessException e) {
-            System.out.println("No luck!");
             return Collections.emptySet();
         }
     }
 
+    private boolean canCastle (Board board, Position position) {
+        return handleKingSideCastling(board, position).size() > 0 || handleQueenSideCastling(board, position).size() > 0;
+    }
+
+    @Override
+    public int getIndex (Board board, Position position) {
+        if (canCastle(board, position)) {
+            return getColor() == PieceColor.WHITE ? 14 : 15;
+        }
+        return super.getIndex(board, position);
+    }
 }

@@ -98,6 +98,9 @@ abstract public class Piece implements Serializable {
         lastMoveHistory.pop();
     }
 
+    public int getIndex (Board board, Position position) {
+        return getColor() == PieceColor.WHITE ? getType().ordinal(): getType().ordinal() + 1;
+    }
 
     public Piece deepCopy () {
         try {

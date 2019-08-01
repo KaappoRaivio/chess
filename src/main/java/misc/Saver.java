@@ -88,7 +88,7 @@ public class Saver<T extends Serializable> implements Serializable {
             try {
                 Object o = objectInputStream.readObject();
                 if (targetClass.isInstance(o)) {
-                    newObject = (T) o;
+                    newObject = targetClass.cast(o);
                 } else {
                     throw new ClassNotFoundException();
                 }

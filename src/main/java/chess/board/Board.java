@@ -1,183 +1,88 @@
 package chess.board;
 
-import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
+import chess.misc.Reader;
+import chess.misc.exceptions.ChessException;
 import chess.move.Move;
+import chess.move.NoMove;
 import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 import misc.Pair;
 import misc.Saver;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.io.Serializable;
+import java.util.BitSet;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class Board implements Serializable{
     private Piece[][] board;
-    private PieceColor turn;
 
     private final int dimX;
     private final int dimY;
 
-    private Position whiteKingPos;
-    private Position blackKingPos;
-
-
-    private Deque<Pair<Position, Position>> kingPosHistory = new LinkedList<>();
-    private UndoTracker undoTracker = new UndoTracker();
     private RepetitionTracker repetitionTracker = new RepetitionTracker();
 
-    private int moveCount;
-    private Deque<Integer> movesSinceCaptureOrPawnMove = new LinkedList<>();
+    private BoardStateHistory stateHistory;
 
 
-    private static final String hPadding = " ";
-    private static final String vPadding = "";
-
-
-
-
-    private Board (Piece[][] board, PieceColor turn, Position whiteKingPos, Position blackKingPos, int moveCount, int movesSinceCaptureOrPawnMove) {
-        this.board = board;
+    private Board (Piece[][] board) {
         this.dimX = board[0].length;
         this.dimY = board.length;
-        this.turn = turn;
 
-        this.whiteKingPos = whiteKingPos;
-        this.blackKingPos = blackKingPos;
+        initBoard(dimX, dimY);
+        this.board = board;
 
-        this.moveCount = moveCount;
-        this.movesSinceCaptureOrPawnMove.push(movesSinceCaptureOrPawnMove);
+        Pair<Position, Position> kingPositions = findKings();
+        stateHistory = new BoardStateHistory(new BoardState(kingPositions.getFirst(), kingPositions.getSecond(), 0, new NoMove()));
     }
 
-    public void undo (int level) {
 
-        for (int i = 0; i < level; i++) {
-            repetitionTracker.subtract(this);
-            undoTracker.undoOneLevel(board);
-
-            Pair<Position, Position> kingPositions = kingPosHistory.pop();
-            whiteKingPos = kingPositions.getFirst();
-            blackKingPos = kingPositions.getSecond();
-
-            movesSinceCaptureOrPawnMove.pop();
-        }
-
-        turn = level % 2 == 1 ? turn.invert() : turn;
+    public static Board fromFile (String path) {
+        return fromFile(path, BoardNotation.DEFAULT_NOTATION);
     }
 
-    private static final Pattern moveTimePattern = Pattern.compile(   "^" + // line start
-                                                                            "[a-hA-H][1-8]" + // Chess position notation
-                                                                            " +" + // Some amount of whitespace
-                                                                            "[-]?\\d" +  // possibly a minus sign, and a single number
-                                                                            "$", // Line end
-            Pattern.MULTILINE);
+    public static Board fromFile (String path, BoardNotation boardNotation) {
+        String[] lines = Reader.readFile(path).split("\n");
 
+        Piece[][] buffer = new Piece[8][8];
 
+            for (int y = 0; y < 8; y++) {
+                String[] line = lines[7 - y].split("( )+");
 
-    public static Board fromFile (String path, BoardNotation notation) {
-        String data;
-        try {
-//            Optional.ofNullable(Board.class.getResourceAsStream(path).readAllBytes()).orElseThrow(() -> new RuntimeException("Invalid path " + path + "!"));
-            data = readFile(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            for (int x = 0; x < 8; x++) {
+                buffer[y][x] = boardNotation.getPiece(line[x]);
+            }
         }
 
+        return new Board(buffer);
+    }
 
-        Piece[][] boardBuffer = new Piece[8][8];
-
-        String[] lines = data.split("\n");
-
+    private Pair<Position, Position> findKings () {
         Position whiteKingPos = null;
         Position blackKingPos = null;
 
-        for (int y = 0; y < 8; y++) {
-            String[] row = lines[y].split(" +");
+        for (int y = 0; y < board.length; y++) {
+            for (int x = 0; x < board[y].length; x++) {
+                Piece piece = getPieceInSquare(new Position(x, y));
 
-            for (int x = 0; x < 8; x++) {
-                Piece pieceTypeAndColor = notation.getPieceTypeAndColor(row[x]); // "7 - y" because the y axis is inverted in the source file
-                if (pieceTypeAndColor.getType() == PieceType.KING && pieceTypeAndColor.getColor() == PieceColor.WHITE) {
-                    if (whiteKingPos == null) {
-                        whiteKingPos = new Position(x, 7 - y);
-                    } else {
-                        throw new ChessException("Cannot have more than one kings (on board file " + path + ")!");
-                    }
-                } else if (pieceTypeAndColor.getType() == PieceType.KING && pieceTypeAndColor.getColor() == PieceColor.BLACK) {
-                    if (blackKingPos == null) {
-                        blackKingPos = new Position(x, 7 - y);
-                    } else {
-                        throw new ChessException("Cannot have more than one kings (on board file " + path + ")!");
-                    }
-                }
-
-                boardBuffer[7 - y][x] = pieceTypeAndColor;
-            }
-        }
-
-        if (whiteKingPos == null || blackKingPos == null) {
-            throw new ChessException("Couldn't find kings from board file " + path + "!");
-        }
-
-        PieceColor turn = PieceColor.WHITE;
-
-        loop: for (String line : lines) {
-            switch (line.toUpperCase()) {
-                case "BLACK":
-                    turn = PieceColor.BLACK;
-                    break loop;
-                case "WHITE":
-                    turn = PieceColor.WHITE;
-                    break loop;
-            }
-        }
-
-        int moveCount = 0;
-
-        for (String line : lines) {
-            if (line.toUpperCase().startsWith("MOVECOUNT")) {
-                moveCount = Integer.parseInt(line.split(" +")[1]);
-                break;
-            }
-        }
-
-        int movesSinceCaptureOrPawnMove = moveCount;
-
-        for (String line : lines) {
-            if (line.toUpperCase().startsWith("MOVESSINCECAPTUREORPAWNMOVE")) {
-                movesSinceCaptureOrPawnMove = Integer.parseInt(line.split(" +")[1]);
-                break;
-            }
-        }
-
-        Board board = new Board(boardBuffer, turn, whiteKingPos, blackKingPos, moveCount, movesSinceCaptureOrPawnMove);
-
-        for (String line : lines) {
-            if (moveTimePattern.matcher(line).matches()) {
-                String[] split = line.split(" +");
-                Position position = Position.fromString(split[0]);
-                int amount = Integer.parseInt(split[1]);
-
-                Piece piece = board.getPieceInSquare(position);
-                if (amount >= 0) {
-                    piece.setHasMoved(true);
+                if (piece.getType() == PieceType.KING && piece.getColor() == PieceColor.WHITE) {
+                    whiteKingPos = new Position(x, y);
+                } else if (piece.getType() == PieceType.KING && piece.getColor() == PieceColor.BLACK) {
+                    blackKingPos = new Position(x, y);
                 }
             }
         }
 
-        return board;
+        return new Pair<>(Optional.ofNullable(whiteKingPos).orElseThrow(() -> new ChessException("Couldn't find white king from board " + toString() + "!")),
+                Optional.ofNullable(blackKingPos).orElseThrow(() -> new ChessException("Couldn't find black king from board " + toString() + "!")));
     }
 
-    private static String readFile (String path) throws IOException {
-        return StringUtils.join(Files.lines(Paths.get(path), StandardCharsets.UTF_8).collect(Collectors.toList()), '\n');
-    }
+
+
 
     private void initBoard (int dimX, int dimY) {
         board = new Piece[dimY][dimX];
@@ -197,10 +102,6 @@ public class Board implements Serializable{
         }
     }
 
-    public Set<Position> getDestinations (Position position) {
-        return getPieceInSquare(position).getPossiblePositions(this, position);
-    }
-
     public boolean isSquareEmpty (Position position) {
         return getPieceInSquare(position).getType() == PieceType.NO_PIECE;
     }
@@ -209,49 +110,37 @@ public class Board implements Serializable{
         return ThreatChecker.isUnderThreat(position, this);
     }
 
-    public int getDimX () {
-        return dimX;
-    }
-
-    public int getDimY () {
-        return dimY;
-    }
-
-    Piece[][] getBoard () {
-        return board;
-    }
 
     public boolean isMoveLegal (Move move) {
-        boolean result = turn == move.getTurn() && getPieceInSquare(move.getOrigin()).getPossiblePositions(this, move.getOrigin()).contains(move.getDestination());
+        boolean result = getPieceInSquare(move.getOrigin()).getPossibleMoves(this, move.getOrigin(), getLastMove()).contains(move);
         if (result) {
             executeMove(move);
-            boolean isPositionLegal = !isSquareUnderThreat(move.getTurn() == PieceColor.WHITE ? whiteKingPos : blackKingPos); // is the player's king in check after the move?
-            undo(1);
+            boolean isStateLegal = !isCheck(move.getColor());
+            unMakeMove(1);
 
-            return isPositionLegal;
+            return isStateLegal;
+        } else {
+            return false;
         }
-        return false;
     }
 
-    public Set<Move> getAllPossibleMoves () {
-        return getAllPossibleMoves(turn);
-    }
 
     public Set<Move> getAllPossibleMoves (PieceColor color) {
         Set<Move> moves = new LinkedHashSet<>();
 
-        for (int y = 0; y < board.length; y++) {
-            for (int x = 0; x < board[y].length; x++) {
+        for (int y = 0; y < dimX; y++) {
+            for (int x = 0; x < dimY; x++) {
                 Piece piece = getPieceInSquare(new Position(x, y));
                 if (piece.getColor() != color) {
                     continue;
                 }
 
-                for (Position possiblePosition : piece.getPossiblePositions(this, new Position(x, y))) {
-                    if (!isMoveLegal(new Move(new Position(x, y), possiblePosition, this))) {
-//                        new ChessException("Warning! not legal: " + new Move(new Position(x, y), possiblePosition, this) + "!").printStackTrace();
+                for (Move possibleMove : piece.getPossibleMoves(this, new Position(x, y), getLastMove())) {
+                    if (!isMoveLegal(possibleMove)) {
+//                        new ChessException("Warning! not legal: " + new Move(new Position(x, y), possibleMove, this) + "!").printStackTrace();
+//                        System.out.println("Rejecting " + possibleMove + "!");
                     } else {
-                        moves.add(new Move(new Position(x, y), possiblePosition, this));
+                        moves.add(possibleMove);
                     }
                 }
             }
@@ -264,134 +153,82 @@ public class Board implements Serializable{
         if (isMoveLegal(move)) {
             executeMove(move);
         } else {
-            throw new ChessException("Move " + move + " isn't legal for position \n" + this + "\n!");
+            throw new ChessException("Move " + move + " is not legal for position " + this + "!");
         }
     }
 
-    public void executeMove (Move move) {
-        registerUndoStateBeforeMove(move);
+    private void executeMove (Move move) {
+        move.makeMove(board);
 
-        Position origin = move.getOrigin();
-        Position destination = move.getDestination();
-        if (getPieceInSquare(origin).getType() == PieceType.KING) {
-            if (move.getTurn() == PieceColor.WHITE) {
-                whiteKingPos = destination;
-            } else if (move.getTurn() == PieceColor.BLACK) {
-                blackKingPos = destination;
-            } else {
-                throw new ChessException("King has NO_COLOR!");
+        stateHistory.push();
+
+        if (move.affectsKingPosition()) {
+            var pair = move.getNewKingPosition();
+
+            switch (pair.getFirst()) {
+                case WHITE:
+                    stateHistory.getCurrentState().setWhiteKingPosition(pair.getSecond());
+                    break;
+                case BLACK:
+                    stateHistory.getCurrentState().setBlackKingPosition(pair.getSecond());
+                    break;
             }
         }
 
-        boolean castling = isCastling(move);
-
-        broadcastMove(move);
-
-        board[destination.getY()][destination.getX()] = getPieceInSquare(origin);
-        board[origin.getY()][origin.getX()] = new NoPiece();
-
-        if (castling) {
-            moveRookToCastlingFormation(move);
-        }
-
-        registerUndoStateAfterMove(move);
-        turn = turn.invert();
-
-        moveCount += 1;
-
-
-
-        if (move.isCapture() || move.isPawnMove()) {
-            movesSinceCaptureOrPawnMove.push(0);
+        if (move.resetsFiftyMoveRule()) {
+            stateHistory.getCurrentState().setMovesSinceFiftyMoveReset(0);
         } else {
-            movesSinceCaptureOrPawnMove.push(Optional.ofNullable(movesSinceCaptureOrPawnMove.peek()).orElseThrow() + 1);
+            stateHistory.getCurrentState().setMovesSinceFiftyMoveReset(stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() + 1);
         }
-    }
 
-    private void registerUndoStateBeforeMove (Move move) {
-        undoTracker.addMove(move);
-        kingPosHistory.push(new Pair<>(whiteKingPos, blackKingPos));
-    }
+        stateHistory.getCurrentState().setLastMove(move);
 
-    private void registerUndoStateAfterMove (Move move) {
         repetitionTracker.add(this);
+
     }
 
-    private void moveRookToCastlingFormation (Move move) {
-        int castlingDirection = getCastlingDirection(move);
-
-        Position origin = move.getOrigin();
-
-        if (castlingDirection > 0) {
-            Position rookPos = new Position(7, origin.getY());
-            getPieceInSquare(rookPos).onMoved(move, this);
-            board[origin.getY()][origin.getX() + 1] = getPieceInSquare(rookPos);
-            board[rookPos.getY()][rookPos.getX()] = new NoPiece();
-        } else if (castlingDirection < 0) {
-            Position rookPos = new Position(0, origin.getY());
-            getPieceInSquare(rookPos).onMoved(move, this);
-            board[origin.getY()][origin.getX() - 1] = getPieceInSquare(rookPos);
-            board[rookPos.getY()][rookPos.getX()] = new NoPiece();
-        } else {
-            throw new ChessException("Error! " + move);
+    public void unMakeMove (int level) {
+        for (int i = 0; i < level; i++) {
+            undo(stateHistory.getCurrentState().getLastMove());
+            stateHistory.pull();
         }
     }
 
-    private boolean isCastling (Move move) {
-        return getPieceInSquare(move.getOrigin()).getType() == PieceType.KING && Math.abs(move.getOrigin().getX() - move.getDestination().getX()) == 2;
-    }
-
-    private boolean resetsFiftyMoveRule (Move move) {
-        return getPieceInSquare(move.getOrigin()).getType() == PieceType.PAWN || getPieceInSquare(move.getDestination()).getType() != PieceType.NO_PIECE;
-    }
-
-    private int getCastlingDirection (Move move) {
-        return Integer.compare(move.getDestination().getX() - move.getOrigin().getX(), 0);
-    }
-
-    private void broadcastMove (Move move) {
-        for (int y = 0; y < dimY; y++) {
-            for (int x = 0; x < dimX; x++) {
-                Position position = new Position(x, y);
-                if (move.getOrigin().equals(position)) {
-                    getPieceInSquare(position).onMoved(move, this);
-                } else {
-                    getPieceInSquare(position).onAnotherPieceMoved(move, this);
-                }
-            }
-        }
-    }
-
-    public Board deepCopy () {
-        return new Saver<Board>().deepCopy(this, Board.class);
+    private void undo (Move lastMove) {
+        repetitionTracker.subtract(this);
+        lastMove.unmakeMove(board);
     }
 
     public boolean isCheck (PieceColor color) {
         Position position;
+
         switch (color) {
             case WHITE:
-                position = whiteKingPos;
+                position = stateHistory.getCurrentState().getWhiteKingPosition();
                 break;
             case BLACK:
-                position = blackKingPos;
+                position = stateHistory.getCurrentState().getBlackKingPosition();
                 break;
             default:
-                throw new ChessException("Cannot use NO_COLOR in this context!");
+                throw new ChessException("No NoColor!");
         }
 
-        return isSquareUnderThreat(position);
+        return ThreatChecker.isUnderThreat(Optional.ofNullable(position).orElseThrow(), this);
     }
 
     public boolean isCheckMate (PieceColor color) {
         return isCheck(color) && getAllPossibleMoves(color).size() == 0;
     }
 
-    public boolean isDraw () {
-        return repetitionTracker.isDraw() || Optional.ofNullable(movesSinceCaptureOrPawnMove.peek()).orElseThrow() >= 50 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
+    public boolean isDraw (PieceColor turn) {
+        return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 50 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
     }
 
     @Override
     public String toString() {
+        String hPadding = " ";
+        String vPadding = "";
+
         StringBuilder builder = new StringBuilder(vPadding).append(hPadding).append(" a b c d e f g h").append(hPadding).append("\n").append(vPadding);
         for (int y = dimY - 1; y >= 0; y--) {
             if (y < dimY - 1) {
@@ -411,20 +248,8 @@ public class Board implements Serializable{
             builder.append(hPadding).append(y + 1);
         }
 
-        return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).append("\n").toString();
+        return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).toString();
     }
-
-    public Position getKingPos (PieceColor color) {
-        switch (color) {
-            case WHITE:
-                return whiteKingPos;
-            case BLACK:
-                return blackKingPos;
-            default:
-                throw new ChessException("Cannot use NO_COLOR!");
-        }
-    }
-
 
     @Override
     public int hashCode () {
@@ -436,7 +261,7 @@ public class Board implements Serializable{
                 if (!isSquareEmpty(position)) {
                     Piece piece = getPieceInSquare(position);
 
-                    result.xor(ZobristBitStrings.getInstance().getSet(position, piece.getIndex(this, position)));
+                    result.xor(ZobristBitStrings.getInstance().getSet(position, piece.getIndex(this, position, getLastMove())));
                 }
             }
         }
@@ -451,5 +276,29 @@ public class Board implements Serializable{
         }
 
         return getClass() == object.getClass() && hashCode() == object.hashCode();
+    }
+
+    public Board deepCopy () {
+        return new Saver<Board>().deepCopy(this, Board.class);
+    }
+
+    public Move getLastMove () {
+        return stateHistory.getCurrentState().getLastMove();
+    }
+
+    public int getDimX () {
+        return dimX;
+    }
+
+    public int getDimY () {
+        return dimY;
+    }
+
+    Piece[][] getBoard () {
+        return board;
+    }
+
+    public BoardStateHistory getStateHistory () {
+        return stateHistory;
     }
 }

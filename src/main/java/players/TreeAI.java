@@ -35,7 +35,7 @@ public class TreeAI extends Player {
             if (score > bestScore) {
                 bestMove = move;
             }
-            board.undo(1);
+            board.unMakeMove(1);
         }
 
         return Optional.ofNullable(bestMove).orElseThrow();
@@ -65,7 +65,7 @@ public class TreeAI extends Player {
                 value = max(value, decisionTree(node, depth - 1, turn.invert(), alpha, beta, initialMove));
                 alpha = max(alpha, value);
 
-                node.undo(0);
+                node.unMakeMove(1);
 
                 if (alpha >= beta) {
                     break;
@@ -82,7 +82,7 @@ public class TreeAI extends Player {
                 value = min(value, decisionTree(node, depth - 1, turn.invert(), alpha, beta, initialMove));
                 beta = min(beta, value);
 
-                node.undo(0);
+                node.unMakeMove(1);
 
                 if (alpha >= beta) {
                     break;

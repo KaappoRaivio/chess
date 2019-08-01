@@ -12,50 +12,35 @@ import java.util.Optional;
 
 public class BoardNotation {
     public static final BoardNotation DEFAULT_NOTATION = new BoardNotation(Map.ofEntries(
-            Map.entry(".", new Pair<>(PieceType.NO_PIECE, PieceColor.NO_COLOR)),
+            Map.entry(".", new NoPiece()),
 
-            Map.entry("p", new Pair<>(PieceType.PAWN, PieceColor.WHITE)),
-            Map.entry("b", new Pair<>(PieceType.BISHOP, PieceColor.WHITE)),
-            Map.entry("n", new Pair<>(PieceType.KNIGHT, PieceColor.WHITE)),
-            Map.entry("r", new Pair<>(PieceType.ROOK, PieceColor.WHITE)),
-            Map.entry("q", new Pair<>(PieceType.QUEEN, PieceColor.WHITE)),
-            Map.entry("k", new Pair<>(PieceType.KING, PieceColor.WHITE)),
+            Map.entry("p", new Pawn(PieceColor.WHITE)),
+            Map.entry("b", new Bishop(PieceColor.WHITE)),
+            Map.entry("n", new Knight(PieceColor.WHITE)),
+            Map.entry("r", new Rook(PieceColor.WHITE)),
+            Map.entry("q", new Queen(PieceColor.WHITE)),
+            Map.entry("k", new King(PieceColor.WHITE)),
 
-            Map.entry("P", new Pair<>(PieceType.PAWN, PieceColor.BLACK)),
-            Map.entry("B", new Pair<>(PieceType.BISHOP, PieceColor.BLACK)),
-            Map.entry("N", new Pair<>(PieceType.KNIGHT, PieceColor.BLACK)),
-            Map.entry("R", new Pair<>(PieceType.ROOK, PieceColor.BLACK)),
-            Map.entry("Q", new Pair<>(PieceType.QUEEN, PieceColor.BLACK)),
-            Map.entry("K", new Pair<>(PieceType.KING, PieceColor.BLACK))
+            Map.entry("P", new Pawn(PieceColor.BLACK)),
+            Map.entry("B", new Bishop(PieceColor.BLACK)),
+            Map.entry("N", new Knight(PieceColor.BLACK)),
+            Map.entry("R", new Rook(PieceColor.BLACK)),
+            Map.entry("Q", new Queen(PieceColor.BLACK)),
+            Map.entry("K", new King(PieceColor.BLACK)),
+
+            Map.entry("k̅", new CastlingKing(PieceColor.WHITE)),
+            Map.entry("K̅", new CastlingKing(PieceColor.BLACK)),
+            Map.entry("r̅", new CastlingRook(PieceColor.WHITE)),
+            Map.entry("R̅", new CastlingRook(PieceColor.BLACK))
     ));
 
-    private Map<String, Pair<PieceType, PieceColor>> pieces;
+    private Map<String, Piece> pieces;
 
-    private BoardNotation (Map<String, Pair<PieceType, PieceColor>> pieces) {
+    private BoardNotation (Map<String, Piece> pieces) {
         this.pieces = pieces;
     }
 
-    Piece getPieceTypeAndColor (String text) {
-        Pair<PieceType, PieceColor> typeAndColor = Optional.ofNullable(pieces.get(text)).orElseThrow(() -> new ChessException("Unknown char " + text + "!"));
-        PieceColor color = typeAndColor.getSecond();
-
-        switch (typeAndColor.getFirst()) {
-            case PAWN:
-                return new Pawn(color);
-            case KNIGHT:
-                return new Knight(color);
-            case BISHOP:
-                return new Bishop(color);
-            case ROOK:
-                return new Rook(color);
-            case QUEEN:
-                return new Queen(color);
-            case KING:
-                return new King(color);
-            case NO_PIECE:
-                return new NoPiece();
-            default:
-                throw new ChessException("Unexpected error: Unknown char " + text + "!");
-        }
+    Piece getPiece (String text) {
+        return Optional.ofNullable(pieces.get(text)).orElseThrow(() -> new ChessException("Unknown char " + text + "!"));
     }
 }

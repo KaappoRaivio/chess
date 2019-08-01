@@ -17,7 +17,7 @@ public class TtyUI implements UI {
 
     @Override
     public void updateValues (Board board, PieceColor turn, int moveCount) {
-        this.board = board.deepCopy();
+        this.board = board;
         this.turn = turn;
         this.moveCount = moveCount;
     }
@@ -28,7 +28,7 @@ public class TtyUI implements UI {
             try {
                 System.out.print("Your move:> ");
                 String response = new Scanner(System.in).nextLine();
-                return new Move(response, board);
+                return Move.parseMove(response, turn, board);
             } catch (ChessException ignored) { }
         }
     }
@@ -37,6 +37,7 @@ public class TtyUI implements UI {
     public void commit () {
         System.out.println(turn + "'s move, " + OrdinalConverter.toOrdinal(moveCount / 2) + " move:");
         System.out.println(board.isCheck(turn) + ", " + board.isCheck(turn.invert()));
+        System.out.println(board.getAllPossibleMoves(turn));
         if (board.isCheck(turn)) {
             System.out.println("Check!");
         }

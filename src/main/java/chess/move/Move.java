@@ -2,109 +2,43 @@ package chess.move;
 
 import chess.board.Board;
 import chess.misc.Position;
+import chess.piece.CastlingKing;
+import chess.piece.CastlingRook;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
-import chess.piece.basepiece.PieceType;
+import misc.Pair;
 
 import java.io.Serializable;
-import java.util.Objects;
 
-public class Move implements Serializable {
+public interface Move extends Serializable {
+    static Move parseMove (String text, PieceColor color, Board board) {
+        if (text.toUpperCase().equals("O-O")) {
+            return new CastlingMove(CastlingType.KING_SIDE, color, board);
+        } else if (text.toUpperCase().equals("O-O-O")) {
+            return new CastlingMove(CastlingType.QUEEN_SIDE, color, board);
+        } else {
+            Position origin = Position.fromString(text.substring(0, 2));
+            Position destination = Position.fromString(text.substring(2));
 
-    private final Position origin;
-    private final Position destination;
-
-    private final Piece pieceUnderDestination;
-
-    private final boolean hasOriginPieceMovedBefore;
-    private final boolean hasDestinationPieceMovedBefore;
-
-    private final PieceColor turn;
-    private final boolean capture;
-    private final boolean pawnMove;
-
-    public Move (String move, Board board) {
-        this(Position.fromString(move.substring(0, 2)), Position.fromString(move.substring(2)), board);
+            if (board.getPieceInSquare(origin) instanceof CastlingRook) {
+                return new CastlingRookMove(origin, destination, board);
+            } else if (board.getPieceInSquare(origin) instanceof CastlingKing) {
+                return new CastlingKingMove(origin, destination, board);
+            } else {
+                return new NormalMove(origin, destination, board);
+            }
+        }
     }
 
-    public Move (Position origin, Position destination, Board board) {
-        this(origin,
-            destination,
-            board.getPieceInSquare(destination),
-            board.getPieceInSquare(origin).hasMoved(),
-            board.getPieceInSquare(origin).hasMoved(),
-                board.getPieceInSquare(origin).getColor(),
-                !board.isSquareEmpty(destination),
-                board.getPieceInSquare(origin).getType() == PieceType.PAWN);
-    }
+    void   makeMove (Piece[][] buffer);
+    void unmakeMove (Piece[][] buffer);
 
-    private Move (Position origin, Position destination, Piece pieceUnderDestination, boolean hasOriginPieceMovedBefore, boolean hasDestinationPieceMovedBefore, PieceColor turn, boolean capture, boolean pawnMove) {
-        this.origin = origin;
-        this.destination = destination;
-        this.pieceUnderDestination = pieceUnderDestination;
-        this.hasOriginPieceMovedBefore = hasOriginPieceMovedBefore;
-        this.hasDestinationPieceMovedBefore = hasDestinationPieceMovedBefore;
-        this.turn = turn;
-        this.capture = capture;
-        this.pawnMove = pawnMove;
-    }
+    boolean resetsFiftyMoveRule ();
 
-    public Position getOrigin () {
-        return origin;
-    }
+    boolean affectsKingPosition ();
+    Pair<PieceColor, Position> getNewKingPosition ();
 
-    public Position getDestination () {
-        return destination;
-    }
-
-    public Piece getPieceUnderDestination () {
-        return pieceUnderDestination;
-    }
-
-    public boolean hasOriginPieceMovedBefore () {
-        return hasOriginPieceMovedBefore;
-    }
-
-    public boolean hasDestinationPieceMovedBefore () {
-        return hasDestinationPieceMovedBefore;
-    }
-
-    public PieceColor getTurn () {
-        return turn;
-    }
-
-    public Move deepCopy () {
-        return this;
-    }
-
-    public boolean isCapture () {
-        return capture;
-    }
-
-    public boolean isPawnMove () {
-        return pawnMove;
-    }
-
-    @Override
-    public boolean equals (Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Move move = (Move) o;
-        return hasOriginPieceMovedBefore == move.hasOriginPieceMovedBefore &&
-                hasDestinationPieceMovedBefore == move.hasDestinationPieceMovedBefore &&
-                getOrigin().equals(move.getOrigin()) &&
-                getDestination().equals(move.getDestination()) &&
-                getPieceUnderDestination().equals(move.getPieceUnderDestination());
-    }
-
-    @Override
-    public int hashCode () {
-        return Objects.hash(getOrigin(), getDestination(), getPieceUnderDestination(), hasOriginPieceMovedBefore, hasDestinationPieceMovedBefore);
-    }
-
-    @Override
-    public String toString () {
-        return origin + "" + destination;
-    }
+    Position getOrigin ();
+    PieceColor getColor ();
 
 }

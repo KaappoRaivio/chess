@@ -2,10 +2,11 @@ package chess.board;
 
 import chess.misc.Position;
 
+import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Random;
 
-public class ZobristBitStrings {
+public class ZobristBitStrings implements Serializable {
     private BitSet[][] bitSets;
     private Random random = new Random(13253453462L);
     private final int length = 32;

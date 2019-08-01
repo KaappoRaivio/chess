@@ -23,10 +23,12 @@ public class Runner {
     public PieceColor play (PieceColor initialTurn) {
         PieceColor turn = initialTurn;
         int moveCount = initialTurn == PieceColor.WHITE ? 1 : 2;
+
+
         for (CapableOfPlaying capableOfPlaying : players) {
             capableOfPlaying.updateValues(board.deepCopy(), turn, moveCount);
         }
-        ui.updateValues(board, turn, moveCount);
+        ui.updateValues(board.deepCopy(), turn, moveCount);
 
         while (true) {
             CapableOfPlaying currentPlayer = players[(moveCount + 1) % 2];
@@ -41,7 +43,7 @@ public class Runner {
 
             while (true) {
                 try {
-                    System.out.println(board.getAllPossibleMoves(turn));
+//                    System.out.println(board.getAllPossibleMoves(turn));
                     Move move = currentPlayer.getMove();
                     System.out.println(move);
                     board.makeMove(move);
@@ -60,7 +62,7 @@ public class Runner {
             for (CapableOfPlaying player : players) {
                 player.updateValues(board.deepCopy(), turn, moveCount);
             }
-            ui.updateValues(board, turn, moveCount);
+            ui.updateValues(board.deepCopy(), turn, moveCount);
 
 
 

@@ -10,11 +10,11 @@ import java.util.Map;
 // https://stackoverflow.com/a/28254483
 
 public class RepetitionTracker implements Serializable {
-    private final Map<Board, Integer> counts = new HashMap<>();
+    private final Map<Integer, Integer> counts = new HashMap<>();
     private boolean draw = false;
 
     public void add (Board value) {
-        counts.merge(value, 1, Integer::sum);
+        counts.merge(value.hashCode(), 1, Integer::sum);
         if (count(value) == 3) {
             draw = true;
             System.out.println("Draw incoming!");
@@ -24,17 +24,17 @@ public class RepetitionTracker implements Serializable {
     }
 
     public void subtract (Board value) {
-        if (!counts.containsKey(value)) {
+        if (!counts.containsKey(value.hashCode())) {
             throw new ChessException("Position \n" + value + " not known!" + value.hashCode());
         }
-        counts.merge(value, -1, Integer::sum);
+        counts.merge(value.hashCode(), -1, Integer::sum);
         if (count(value) < 3) {
             draw = false;
         }
     }
 
     private int count (Board value) {
-        return counts.getOrDefault(value, 0);
+        return counts.getOrDefault(value.hashCode(), 0);
     }
 
     public boolean isDraw () {

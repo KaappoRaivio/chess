@@ -17,13 +17,8 @@ public class NoPiece extends Piece {
     }
 
     @Override
-    public Set<Position> getPossiblePositions (Board board, Position position) {
+    public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove) {
         return Collections.emptySet();
-    }
-
-    @Override
-    public void onMoved (Move move, Board board) {
-        throw new ChessException("NoPiece cannot be moved from " + move.getOrigin() + " to " + move.getDestination() + "!");
     }
 
     @Override
@@ -36,12 +31,7 @@ public class NoPiece extends Piece {
     }
 
     @Override
-    public Piece deepCopy () {
-        return this; // no need to deepcopy
-    }
-
-    @Override
-    public int getIndex (Board board, Position position) {
+    public int getIndex (Board board, Position position, Move lastMove) {
         return 0;
     }
 }

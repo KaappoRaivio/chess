@@ -3,6 +3,8 @@ package chess.piece;
 import chess.board.Board;
 import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
+import chess.move.Move;
+import chess.move.NormalMove;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
@@ -29,16 +31,16 @@ public class Knight extends Piece {
     }
 
     @Override
-    public Set<Position> getPossiblePositions (Board board, Position position) {
+    public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove) {
         return Arrays.stream(offsets).map(item -> {
             try {
-                return position.offset(item);
+                return new NormalMove(position, position.offset(item), board);
             } catch (ChessException e) {
-                return position;  // Mark all positions outside the board temporarily...
+                return new NormalMove(position, position, board);  // Mark all positions outside the board temporarily...
             }
         })
-                .filter(item -> !position.equals(item))  // ... and remove them here
-                .filter(item -> board.getPieceInSquare(item).getColor() != color)
+                .filter(item -> !new NormalMove(position, position, board).equals(item))  // ... and remove them here
+                .filter(item -> board.getPieceInSquare(item.getDestination()).getColor() != color)
                 .collect(Collectors.toSet());
     }
 }

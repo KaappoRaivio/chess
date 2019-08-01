@@ -2,33 +2,38 @@ package chess.piece;
 
 import chess.board.Board;
 import chess.misc.Position;
+import chess.move.Move;
+import chess.move.NormalMove;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Rook extends Piece {
     public Rook (PieceColor color) {
-        super(PieceType.ROOK, color, color == PieceColor.WHITE ? "♖" : "♜", 5);
+        this(color, color == PieceColor.WHITE ? "♖" : "♜");
+    }
+
+    Rook (PieceColor color, String symbol) {
+        super(PieceType.ROOK, color, symbol, 5);
     }
 
     @Override
-    public Set<Position> getPossiblePositions (Board board, Position position) {
-        Set<Position> list = new LinkedHashSet<>();
+    public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove) {
+        Set<Move> moves = new LinkedHashSet<>();
 
-        list.addAll(handleUp(board, position));
-        list.addAll(handleDown(board, position));
-        list.addAll(handleLeft(board, position));
-        list.addAll(handleRight(board, position));
+        moves.addAll(handleUp(board, position));
+        moves.addAll(handleDown(board, position));
+        moves.addAll(handleLeft(board, position));
+        moves.addAll(handleRight(board, position));
 
-        return list;
+        return moves;
     }
 
-    private Set<Position> handleUp (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleUp (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
 
         for (Position pos = position.offsetY(1, false); pos.getY() < board.getDimY(); pos = pos.offsetY(1, false)) {
             Piece piece = board.getPieceInSquare(pos);
@@ -36,70 +41,70 @@ public class Rook extends Piece {
             if (piece.getColor() == color) {
                 break;
             } else if (piece.getColor() == color.invert()) {
-                positions.add(pos);
+                moves.add(new NormalMove(position, pos, board));
                 break;
             } else {
-                positions.add(pos);
+                moves.add(new NormalMove(position, pos, board));
             }
         }
 
-        return positions;
+        return moves;
     }
 
-    private Set<Position> handleDown (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleDown (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
 
-        for (Position pos = position.offsetY(-1, false); pos.getY() >= 0; pos = pos.offsetY(-1, false)) {
-            Piece piece = board.getPieceInSquare(pos);
+        for (Position newPosition = position.offsetY(-1, false); newPosition.getY() >= 0; newPosition = newPosition.offsetY(-1, false)) {
+            Piece piece = board.getPieceInSquare(newPosition);
 
             if (piece.getColor() == color) {
                 break;
             } else if (piece.getColor() == color.invert()) {
-                positions.add(pos);
+                moves.add(new NormalMove(position, newPosition, board));
                 break;
             } else {
-                positions.add(pos);
+                moves.add(new NormalMove(position, newPosition, board));
             }
         }
 
-        return positions;
+        return moves;
     }
 
-    private Set<Position> handleLeft (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleLeft (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
 
-        for (Position pos = position.offsetX(1, false); pos.getX() < board.getDimX(); pos = pos.offsetX(1, false)) {
-            Piece piece = board.getPieceInSquare(pos);
+        for (Position newPosition = position.offsetX(1, false); newPosition.getX() < board.getDimX(); newPosition = newPosition.offsetX(1, false)) {
+            Piece piece = board.getPieceInSquare(newPosition);
 
             if (piece.getColor() == color) {
                 break;
             } else if (piece.getColor() == color.invert()) {
-                positions.add(pos);
+                moves.add(new NormalMove(position, newPosition, board));
                 break;
             } else {
-                positions.add(pos);
+                moves.add(new NormalMove(position, newPosition, board));
             }
         }
 
-        return positions;
+        return moves;
     }
 
-    private Set<Position> handleRight (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleRight (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
 
-        for (Position pos = position.offsetX(-1, false); pos.getX() >= 0; pos = pos.offsetX(-1, false)) {
-            Piece piece = board.getPieceInSquare(pos);
+        for (Position newPosition = position.offsetX(-1, false); newPosition.getX() >= 0; newPosition = newPosition.offsetX(-1, false)) {
+            Piece piece = board.getPieceInSquare(newPosition);
 
             if (piece.getColor() == color) {
                 break;
             } else if (piece.getColor() == color.invert()) {
-                positions.add(pos);
+                moves.add(new NormalMove(position, newPosition, board));
                 break;
             } else {
-                positions.add(pos);
+                moves.add(new NormalMove(position, newPosition, board));
             }
         }
 
-        return positions;
+        return moves;
     }
 }

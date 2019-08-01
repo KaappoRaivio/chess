@@ -2,11 +2,12 @@ package chess.piece;
 
 import chess.board.Board;
 import chess.misc.Position;
+import chess.move.Move;
+import chess.move.NormalMove;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,19 +17,19 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public Set<Position> getPossiblePositions (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove) {
+        Set<Move> mvoes = new LinkedHashSet<>();
 
-        positions.addAll(handleUpRight(board, position));
-        positions.addAll(handleUpLeft(board, position));
-        positions.addAll(handleDownLeft(board, position));
-        positions.addAll(handleDownRight(board, position));
+        mvoes.addAll(handleUpRight(board, position));
+        mvoes.addAll(handleUpLeft(board, position));
+        mvoes.addAll(handleDownLeft(board, position));
+        mvoes.addAll(handleDownRight(board, position));
 
-        return positions;
+        return mvoes;
     }
 
-    private Set<Position> handleUpRight (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleUpRight (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
         int checkX = position.getX() + 1;
         int checkY = position.getY() + 1;
 
@@ -37,22 +38,22 @@ public class Bishop extends Piece {
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
-                return positions;
+                return moves;
             } else if (currentPiece.getColor() == color.invert()) {
-                positions.add(newPosition);
-                return positions;
+                moves.add(new NormalMove(position, newPosition, board));
+                return moves;
             } else {
-                positions.add(newPosition);
+                moves.add(new NormalMove(position, newPosition, board));
             }
             checkX += 1;
             checkY += 1;
         }
 
-        return positions;
+        return moves;
     }
 
-    private Set<Position> handleUpLeft (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleUpLeft (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
         int checkX = position.getX() - 1;
         int checkY = position.getY() + 1;
 
@@ -61,22 +62,22 @@ public class Bishop extends Piece {
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
-                return positions;
+                return moves;
             } else if (currentPiece.getColor() == color.invert()) {
-                positions.add(newPosition);
-                return positions;
+                moves.add(new NormalMove(position, newPosition, board));
+                return moves;
             } else {
-                positions.add(newPosition);
+                moves.add(new NormalMove(position, newPosition, board));
             }
             checkX -= 1;
             checkY += 1;
         }
 
-        return positions;
+        return moves;
     }
 
-    private Set<Position> handleDownLeft (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleDownLeft (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
         int checkX = position.getX() - 1;
         int checkY = position.getY() - 1;
 
@@ -85,22 +86,22 @@ public class Bishop extends Piece {
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
-                return positions;
+                return moves;
             } else if (currentPiece.getColor() == color.invert()) {
-                positions.add(newPosition);
-                return positions;
+                moves.add(new NormalMove(position, newPosition, board));
+                return moves;
             } else {
-                positions.add(newPosition);
+                moves.add(new NormalMove(position, newPosition, board));
             }
             checkX -= 1;
             checkY -= 1;
         }
 
-        return positions;
+        return moves;
     }
 
-    private Set<Position> handleDownRight (Board board, Position position) {
-        Set<Position> positions = new LinkedHashSet<>();
+    private Set<Move> handleDownRight (Board board, Position position) {
+        Set<Move> moves = new LinkedHashSet<>();
         int checkX = position.getX() + 1;
         int checkY = position.getY() - 1;
 
@@ -109,17 +110,17 @@ public class Bishop extends Piece {
             Piece currentPiece = board.getPieceInSquare(newPosition);
 
             if (currentPiece.getColor() == color) {
-                return positions;
+                return moves;
             } else if (currentPiece.getColor() == color.invert()) {
-                positions.add(newPosition);
-                return positions;
+                moves.add(new NormalMove(position, newPosition, board));
+                return moves;
             } else {
-                positions.add(newPosition);
+                moves.add(new NormalMove(position, newPosition, board));
             }
             checkX += 1;
             checkY -= 1;
         }
 
-        return positions;
+        return moves;
     }
 }

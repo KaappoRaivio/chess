@@ -2,6 +2,7 @@ package chess.piece;
 
 import chess.board.Board;
 import chess.misc.Position;
+import chess.move.Move;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
@@ -14,9 +15,9 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Set<Position> getPossiblePositions (Board board, Position position) {
-        Set<Position> moves = new Rook(color).getPossiblePositions(board, position);
-        moves.addAll(new Bishop(color).getPossiblePositions(board, position));
+    public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove) {
+        Set<Move> moves = new Rook(color).getPossibleMoves(board, position, lastMove);
+        moves.addAll(new Bishop(color).getPossibleMoves(board, position, lastMove));
 
         return moves;
     }

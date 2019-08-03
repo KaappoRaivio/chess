@@ -1,5 +1,7 @@
 package chess.piece.basepiece;
 
+import chess.misc.exceptions.ChessException;
+
 import java.io.Serializable;
 
 public enum PieceColor implements Serializable {
@@ -12,7 +14,8 @@ public enum PieceColor implements Serializable {
             case WHITE:
                 return BLACK;
             default:
-//                throw new ChessException("Cannot invert NO_COLOR!");
+//                throw new RuntimeException("Cannot invert NO_COLOR!");
+//                System.out.println("Inverting no_color!");
                 return NO_COLOR;
         }
     }

@@ -55,10 +55,16 @@ abstract public class Piece implements Serializable {
     }
 
     public int getValue (Position position) {
-        if (color == PieceColor.WHITE) {
-            return value * (getPieceSquareTable()[position.getY()][position.getX()]);
-        } else {
-            return value * (getPieceSquareTable()[7 - position.getY()][position.getX()]);
+        switch (color) {
+            case NO_COLOR:
+            case WHITE:
+                return value * (getPieceSquareTable()[position.getY()][position.getX()]);
+            case BLACK:
+                return value * (getPieceSquareTable()[7 - position.getY()][position.getX()]);
+            default:
+                throw new ChessException("");
+
+//        return value;
         }
     }
 

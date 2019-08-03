@@ -136,10 +136,7 @@ public class Board implements Serializable{
                 }
 
                 for (Move possibleMove : piece.getPossibleMoves(this, new Position(x, y), getLastMove())) {
-                    if (!isMoveLegal(possibleMove)) {
-//                        new ChessException("Warning! not legal: " + new Move(new Position(x, y), possibleMove, this) + "!").printStackTrace();
-//                        System.out.println("Rejecting " + possibleMove + "!");
-                    } else {
+                    if (isMoveLegal(possibleMove)) {
                         moves.add(possibleMove);
                     }
                 }
@@ -222,6 +219,10 @@ public class Board implements Serializable{
 
     public boolean isDraw (PieceColor turn) {
         return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 50 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
+    }
+
+    public boolean isDrawNoStalemateCheck (PieceColor turn) {
+        return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 50;
     }
 
     @Override

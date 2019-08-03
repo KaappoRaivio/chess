@@ -2,10 +2,10 @@ R̅ N B Q K̅ B N R̅
 P P P P P P P P
 . . . . . . . .
 . . . . . . . .
+. . . . p . . .
 . . . . . . . .
-. . . . . . . .
-p p p p p p p p
-r̅ n b . k̅ b n r̅
+p p p p . p p p
+r̅ n b q k̅ b n r̅
 
 WHITE
 

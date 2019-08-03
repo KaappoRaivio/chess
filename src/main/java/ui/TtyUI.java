@@ -2,6 +2,7 @@ package ui;
 
 import chess.board.Board;
 import chess.misc.exceptions.ChessException;
+import chess.misc.exceptions.StopException;
 import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
 import misc.OrdinalConverter;
@@ -28,8 +29,11 @@ public class TtyUI implements UI {
             try {
                 System.out.print("Your move:> ");
                 String response = new Scanner(System.in).nextLine();
+                if (response.toLowerCase().equals("stop")) {
+                    throw new StopException();
+                }
                 return Move.parseMove(response, turn, board);
-            } catch (ChessException ignored) { ignored.printStackTrace();}
+            } catch (ChessException e) { e.printStackTrace();}
         }
     }
 

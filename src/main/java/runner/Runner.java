@@ -1,6 +1,7 @@
 package runner;
 
 import chess.board.Board;
+import chess.misc.exceptions.StopException;
 import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
 
@@ -48,6 +49,8 @@ public class Runner {
                     System.out.println(move);
                     board.makeMove(move);
                     break;
+                } catch (StopException e) {
+                    throw e;
                 } catch (RuntimeException e) {
                     e.printStackTrace();
                     System.out.println("Move is invalid!");
@@ -69,5 +72,9 @@ public class Runner {
         }
 
         return turn;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }

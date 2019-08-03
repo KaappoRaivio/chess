@@ -17,7 +17,7 @@ public class Rook extends Piece {
     }
 
     Rook (PieceColor color, String symbol) {
-        super(PieceType.ROOK, color, symbol, 5);
+        super(PieceType.ROOK, color, symbol, 500);
     }
 
     @Override
@@ -30,6 +30,20 @@ public class Rook extends Piece {
         moves.addAll(handleRight(board, position));
 
         return moves;
+    }
+
+    @Override
+    protected int[][] getPieceSquareTable () {
+        return new int[][]{
+                {0,  0,  0,  5,  5,  0,  0,  0},
+                {-5,  0,  0,  0,  0,  0,  0, -5},
+                {-5,  0,  0,  0,  0,  0,  0, -5},
+                {-5,  0,  0,  0,  0,  0,  0, -5},
+                {-5,  0,  0,  0,  0,  0,  0, -5},
+                {-5,  0,  0,  0,  0,  0,  0, -5},
+                {5, 10, 10, 10, 10, 10, 10,  5},
+                {0,  0,  0,  0,  0,  0,  0,  0},
+        };
     }
 
     private Set<Move> handleUp (Board board, Position position) {

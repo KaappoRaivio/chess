@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class CastlingKing extends King {
 
     public CastlingKing (PieceColor color) {
-        super(color, color == PieceColor.WHITE ? "♔̅" : "♚̅");
+        super(color, color == PieceColor.WHITE ? "♔̅" : "♚̅", 500);
     }
 
 

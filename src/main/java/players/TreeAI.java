@@ -2,58 +2,67 @@ package players;
 
 import chess.board.Board;
 import chess.misc.Position;
+import chess.misc.Triple;
 import chess.move.Move;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
+import misc.Pair;
 import runner.UI;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static chess.piece.basepiece.PieceColor.WHITE;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class TreeAI extends Player {
     private int depth;
+    final private double small;
 
     public TreeAI (PieceColor color, String name, UI ui, int depth) {
         super(color, name, ui);
         this.depth = depth;
+
+        small = color == PieceColor.WHITE ? -1e10 : 1e10;
     }
 
     @Override
     public Move getMove () {
 
-        Move bestMove = null;
-        double bestScore = -1e11;
+        Set<Move> allPossibleMoves = board.getAllPossibleMoves(color);
 
-        for (Move move : board.getAllPossibleMoves(color)) {
-            board.makeMove(move);
-            double score = evaluateMove(board);
-            if (score > bestScore) {
-                bestMove = move;
-            }
-            board.unMakeMove(1);
-        }
+        List<Triple<Board, Move, Double>> movesAndScores = allPossibleMoves
+                .stream()
+                .map(move -> new Triple<>(board.deepCopy(), move, 0.0))
+                .collect(Collectors.toList())
+                .parallelStream()
+                .map(this::apply)  // The heavy lifting
+                .collect(Collectors.toList());
 
-        return Optional.ofNullable(bestMove).orElseThrow();
+        System.out.println(movesAndScores);
+
+        return movesAndScores
+                .stream()
+                .max(Comparator.comparingDouble(Triple::getThird))
+                .orElseThrow()
+                .getSecond();
 
     }
 
     private Map<Move, Board> movesAndPositions = new HashMap<>();
 
-    private double evaluateMove (Board position) {
-        return decisionTree(board, depth, color.invert(), -1e10, 1e10, null);
+    private double evaluateMove (Board position, Move initialMove) {
+        return decisionTree(board, depth, color.invert(), -1e10, 1e10, initialMove);
     }
 
     private double decisionTree (Board node, int depth, PieceColor turn, double alpha, double beta, Move initialMove) {
         if (depth <= 0) {
-            movesAndPositions.put(initialMove, node.deepCopy());
+//            movesAndPositions.put(initialMove, node.deepCopy());
+            return evaluatePosition(node, turn);
         } else if (node.isCheckMate(turn)) {
-            movesAndPositions.put(initialMove, node.deepCopy());
-            return -1e10 + evaluatePosition(node, turn);
+            System.out.println("Checkmate");
+            System.out.println(node);
+//            movesAndPositions.put(initialMove, node.deepCopy());
+            return small + evaluatePosition(node, turn);
         }
 
         if (turn == color) {
@@ -99,10 +108,17 @@ public class TreeAI extends Player {
         for (int y = 0; y < position.getDimY(); y++) {
             for (int x = 0; x < position.getDimX(); x++) {
                 Piece piece = board.getPieceInSquare(new Position(x, y));
-                sum += piece.getColor() == turn ? piece.getValue() : -piece.getValue();
+                sum += piece.getColor() == color ? piece.getValue(new Position(x, y)) : -piece.getValue(new Position(x, y));
             }
         }
 
         return sum;
+    }
+
+    private Triple<Board, Move, Double> apply (Triple<Board, Move, Double> triple) {
+        triple.getFirst().makeMove(triple.getSecond());
+        Triple<Board, Move, Double> result = new Triple<>(triple.getFirst(), triple.getSecond(), evaluateMove(triple.getFirst(), triple.getSecond()));
+        triple.getFirst().unMakeMove(1);
+        return result;
     }
 }

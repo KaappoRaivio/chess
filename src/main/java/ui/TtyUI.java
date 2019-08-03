@@ -29,7 +29,7 @@ public class TtyUI implements UI {
                 System.out.print("Your move:> ");
                 String response = new Scanner(System.in).nextLine();
                 return Move.parseMove(response, turn, board);
-            } catch (ChessException ignored) { }
+            } catch (ChessException ignored) { ignored.printStackTrace();}
         }
     }
 

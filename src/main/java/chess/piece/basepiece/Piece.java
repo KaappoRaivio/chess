@@ -28,6 +28,7 @@ abstract public class Piece implements Serializable {
 
 
     abstract public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove);
+    protected abstract int[][] getPieceSquareTable ();
 
     @Override
     public String toString () {
@@ -53,8 +54,12 @@ abstract public class Piece implements Serializable {
         return getColor() == PieceColor.WHITE ? getType().ordinal(): getType().ordinal() + 1;
     }
 
-    public int getValue () {
-        return value;
+    public int getValue (Position position) {
+        if (color == PieceColor.WHITE) {
+            return value * (getPieceSquareTable()[position.getY()][position.getX()]);
+        } else {
+            return value * (getPieceSquareTable()[7 - position.getY()][position.getX()]);
+        }
     }
 
     public PieceType getType () {

@@ -27,7 +27,7 @@ public class Knight extends Piece {
 
 
     public Knight (PieceColor color) {
-        super(PieceType.KNIGHT, color, color == PieceColor.WHITE ? "♘" : "♞", 3);
+        super(PieceType.KNIGHT, color, color == PieceColor.WHITE ? "♘" : "♞", 320);
     }
 
     @Override
@@ -42,5 +42,19 @@ public class Knight extends Piece {
                 .filter(item -> !new NormalMove(position, position, board).equals(item))  // ... and remove them here
                 .filter(item -> board.getPieceInSquare(item.getDestination()).getColor() != color)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    protected int[][] getPieceSquareTable () {
+        return new int[][]{
+                {-50,-40,-30,-30,-30,-30,-40,-50},
+                {-40,-20,  0,  5,  5,  0,-20,-40},
+                {-30,  5, 10, 15, 15, 10,  5,-30},
+                {-30,  0, 15, 20, 20, 15,  0,-30},
+                {-30,  5, 15, 20, 20, 15,  5,-30},
+                {-30,  0, 10, 15, 15, 10,  0,-30},
+                {-40,-20,  0,  0,  0,  0,-20,-40},
+                {-50,-40,-30,-30,-30,-30,-40,-50},
+        };
     }
 }

@@ -17,7 +17,6 @@ public class RepetitionTracker implements Serializable {
         counts.merge(value.hashCode(), 1, Integer::sum);
         if (count(value) == 3) {
             draw = true;
-            System.out.println("Draw incoming!");
 //            throw new DrawException();
         }
 

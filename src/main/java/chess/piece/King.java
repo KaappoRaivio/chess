@@ -26,11 +26,11 @@ public class King extends Piece {
     };
 
     public King (PieceColor color) {
-        this(color, color == PieceColor.WHITE ? "♔" : "♚");
+        this(color, color == PieceColor.WHITE ? "♔" : "♚", 400);
     }
 
-    King (PieceColor color, String symbol) {
-        super(PieceType.KING, color, symbol, 4);
+    King (PieceColor color, String symbol, int value) {
+        super(PieceType.KING, color, symbol, value);
     }
 
     @Override
@@ -45,6 +45,20 @@ public class King extends Piece {
                 .filter(item -> !new NormalMove(position, position, board).equals(item)) // ... and remove them here
                 .filter(item -> board.getPieceInSquare(item.getDestination()).getColor() != color)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    protected int[][] getPieceSquareTable () {
+        return new int[][]{
+                {20, 30, 10,  0,  0, 10, 30, 20},
+                {20, 20,  0,  0,  0,  0, 20, 20},
+                {-10,-20,-20,-20,-20,-20,-20,-10},
+                {-20,-30,-30,-40,-40,-30,-30,-20},
+                {-30,-40,-40,-50,-50,-40,-40,-30},
+                {-30,-40,-40,-50,-50,-40,-40,-30},
+                {-30,-40,-40,-50,-50,-40,-40,-30},
+                {-30,-40,-40,-50,-50,-40,-40,-30},
+        };
     }
 
 

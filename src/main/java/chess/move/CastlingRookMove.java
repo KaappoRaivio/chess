@@ -12,7 +12,7 @@ public class CastlingRookMove extends NormalMove {
         super(origin, destination, board);
 
         if (!(board.getPieceInSquare(origin) instanceof CastlingRook)) {
-            throw new ChessException("CastlingRookMove can't be used for piece type " + board.getPieceInSquare(origin) + "!");
+            throw new ChessException("CastlingRookMove can't be used for piece type " + board.getPieceInSquare(origin) + "! " + board.getPieceInSquare(origin).getClass());
         }
     }
 

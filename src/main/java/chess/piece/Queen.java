@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Queen extends Piece {
     public Queen (PieceColor color) {
-        super(PieceType.QUEEN, color, color == PieceColor.WHITE ? "♕" : "♛", 9);
+        super(PieceType.QUEEN, color, color == PieceColor.WHITE ? "♕" : "♛", 900);
     }
 
     @Override
@@ -20,5 +20,19 @@ public class Queen extends Piece {
         moves.addAll(new Bishop(color).getPossibleMoves(board, position, lastMove));
 
         return moves;
+    }
+
+    @Override
+    protected int[][] getPieceSquareTable () {
+        return new int[][]{
+                {-20,-10,-10, -5, -5,-10,-10,-20},
+                {-10,  0,  5,  0,  0,  0,  0,-10},
+                {-10,  5,  5,  5,  5,  5,  0,-10},
+                {0,  0,  5,  5,  5,  5,  0, -5},
+                {-5,  0,  5,  5,  5,  5,  0, -5},
+                {-10,  0,  5,  5,  5,  5,  0,-10},
+                {-10,  0,  0,  0,  0,  0,  0,-10},
+                {-20,-10,-10, -5, -5,-10,-10,-20},
+        };
     }
 }

@@ -229,7 +229,7 @@ public class Board implements Serializable{
         String hPadding = " ";
         String vPadding = "";
 
-        StringBuilder builder = new StringBuilder(vPadding).append(hPadding).append(" a b c d e f g h").append(hPadding).append("\n").append(vPadding);
+        StringBuilder builder = new StringBuilder(vPadding).append(hPadding).append("\n  a b c d e f g h").append(hPadding).append("\n").append(vPadding);
         for (int y = dimY - 1; y >= 0; y--) {
             if (y < dimY - 1) {
                 builder.append("\n");

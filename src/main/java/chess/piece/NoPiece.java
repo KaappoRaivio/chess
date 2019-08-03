@@ -22,6 +22,11 @@ public class NoPiece extends Piece {
     }
 
     @Override
+    protected int[][] getPieceSquareTable () {
+        return new int[8][8];
+    }
+
+    @Override
     public boolean equals (Object o) {
         try {
             return o.getClass().equals(getClass());

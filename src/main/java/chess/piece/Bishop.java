@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class Bishop extends Piece {
     public Bishop (PieceColor color) {
-        super(PieceType.BISHOP, color, color == PieceColor.WHITE ? "♗" : "♝", 3);
+        super(PieceType.BISHOP, color, color == PieceColor.WHITE ? "♗" : "♝", 330);
     }
 
     @Override
@@ -26,6 +26,20 @@ public class Bishop extends Piece {
         mvoes.addAll(handleDownRight(board, position));
 
         return mvoes;
+    }
+
+    @Override
+    protected int[][] getPieceSquareTable () {
+        return new int[][]{
+                {-20,-10,-10,-10,-10,-10,-10,-20},
+                {-10,  5,  0,  0,  0,  0,  5,-10},
+                {-10, 10, 10, 10, 10, 10, 10,-10},
+                {-10,  0, 10, 10, 10, 10,  0,-10},
+                {-10,  5,  5, 10, 10,  5,  5,-10},
+                {-10,  0,  5, 10, 10,  5,  0,-10},
+                {-10,  0,  0,  0,  0,  0,  0,-10},
+                {-20,-10,-10,-10,-10,-10,-10,-20}
+        };
     }
 
     private Set<Move> handleUpRight (Board board, Position position) {

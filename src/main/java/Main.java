@@ -12,7 +12,8 @@ import ui.TtyUI;
 
 public class Main {
     public static void main (String[] args) {
-        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
+//        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
+        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos6.txt", BoardNotation.DEFAULT_NOTATION);
 //        board.getAllPossibleMoves(PieceColor.WHITE);
 //        System.out.println(board.isCheckMate(PieceColor.WHITE));
 //        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos5.txt", BoardNotation.DEFAULT_NOTATION);
@@ -29,8 +30,18 @@ public class Main {
 //        board.deepCopy();
 //        System.out.println(board);
 //        System.exit(0);
-        System.out.println(board.getAllPossibleMoves(PieceColor.WHITE));
-        System.out.println(board);
+//        System.out.println(board.getAllPossibleMoves(PieceColor.WHITE));
+//        System.out.println(board);
+
+        /*
+        P = 100
+        N = 320
+        B = 330
+        R = 500
+        Q = 900
+        K = 20000
+         */
+        System.out.println(board.isCheck(PieceColor.BLACK));
         System.out.println(board.getStateHistory().getCurrentState());
 //        System.exit(0);
 

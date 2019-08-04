@@ -28,7 +28,7 @@ abstract public class Piece implements Serializable {
 
 
     abstract public Set<Move> getPossibleMoves (Board board, Position position, Move lastMove);
-    protected abstract int[][] getPieceSquareTable ();
+    protected abstract double[][] getPieceSquareTable ();
 
     @Override
     public String toString () {
@@ -54,13 +54,13 @@ abstract public class Piece implements Serializable {
         return getColor() == PieceColor.WHITE ? getType().ordinal(): getType().ordinal() + 1;
     }
 
-    public int getValue (Position position) {
+    public double getValue (Position position) {
         switch (color) {
             case NO_COLOR:
             case WHITE:
-                return value * (getPieceSquareTable()[position.getY()][position.getX()]);
+                return value + value * (getPieceSquareTable()[position.getY()][position.getX()]);
             case BLACK:
-                return value * (getPieceSquareTable()[7 - position.getY()][position.getX()]);
+                return value + value * (getPieceSquareTable()[7 - position.getY()][position.getX()]);
             default:
                 throw new ChessException("");
 

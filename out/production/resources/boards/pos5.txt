@@ -7,9 +7,6 @@ k . K . . . . .
 . . . p . . . .
 . . . . . . . .
 
-WHITE
+BLACK
 
-MOVESSINCECAPTUREORPAWNMOVE 49
-
-D2 -1
-E4 1
+movecount 34

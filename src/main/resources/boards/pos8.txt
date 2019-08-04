@@ -1,11 +1,11 @@
-R̅ N B . K̅ B N R̅
-P P P . . P P P
+R̅ N B Q K̅ B N R̅
+P P P P . P P P
 . . . . . . . .
-. . . Q P . . .
-. . b . . . . .
-. . . . . n . .
-p p p p . p p p
-r̅ n b q k̅ . . r̅
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+p p p p p p p p
+r̅ n b q k̅ b n r̅
 
 WHITE
 

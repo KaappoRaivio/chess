@@ -46,4 +46,9 @@ public class NoMove implements Move {
     public String toString () {
         return "NoMove";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj.getClass() == getClass();
+    }
 }

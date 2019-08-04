@@ -31,7 +31,26 @@ public class BoardNotation {
             Map.entry("k̅", new CastlingKing(PieceColor.WHITE)),
             Map.entry("K̅", new CastlingKing(PieceColor.BLACK)),
             Map.entry("r̅", new CastlingRook(PieceColor.WHITE)),
-            Map.entry("R̅", new CastlingRook(PieceColor.BLACK))
+            Map.entry("R̅", new CastlingRook(PieceColor.BLACK)),
+
+            Map.entry("♙", new Pawn(PieceColor.WHITE)),
+            Map.entry("♗", new Bishop(PieceColor.WHITE)),
+            Map.entry("♘", new Knight(PieceColor.WHITE)),
+            Map.entry("♖", new Rook(PieceColor.WHITE)),
+            Map.entry("♕", new Queen(PieceColor.WHITE)),
+            Map.entry("♔", new King(PieceColor.WHITE)),
+
+            Map.entry("♟", new Pawn(PieceColor.BLACK)),
+            Map.entry("♝", new Bishop(PieceColor.BLACK)),
+            Map.entry("♞", new Knight(PieceColor.BLACK)),
+            Map.entry("♜", new Rook(PieceColor.BLACK)),
+            Map.entry("♛", new Queen(PieceColor.BLACK)),
+            Map.entry("♚", new King(PieceColor.BLACK)),
+
+            Map.entry("♔̅", new CastlingKing(PieceColor.WHITE)),
+            Map.entry("♚̅", new CastlingKing(PieceColor.BLACK)),
+            Map.entry("♖̅", new CastlingRook(PieceColor.WHITE)),
+            Map.entry("♜̅", new CastlingRook(PieceColor.BLACK))
     ));
 
     private Map<String, Piece> pieces;
@@ -40,7 +59,7 @@ public class BoardNotation {
         this.pieces = pieces;
     }
 
-    Piece getPiece (String text) {
+    public Piece getPiece(String text) {
         return Optional.ofNullable(pieces.get(text)).orElseThrow(() -> new ChessException("Unknown char " + text + "!"));
     }
 }

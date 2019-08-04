@@ -11,7 +11,7 @@ public class Player implements CapableOfPlaying {
     protected PieceColor turn;
     protected int moveCount;
 
-    protected PieceColor color;
+    final protected PieceColor color;
     private UI ui;
     private String name;
 

@@ -1,9 +1,11 @@
 package chess.board;
 
 import chess.move.Move;
+import chess.move.NoMove;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BoardStateHistory implements Serializable {
     private Deque<BoardState> states = new LinkedList<>();
@@ -24,5 +26,9 @@ public class BoardStateHistory implements Serializable {
 
     public BoardState getCurrentState () {
         return Optional.ofNullable(states.peek()).orElseThrow();
+    }
+
+    List<BoardState> getPreviousStates() {
+        return (List<BoardState>) states;
     }
 }

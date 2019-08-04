@@ -1,7 +1,7 @@
 package chess.board;
 
 import chess.misc.Position;
-import chess.misc.Reader;
+import chess.misc.ReadWriter;
 import chess.misc.exceptions.ChessException;
 import chess.move.Move;
 import chess.move.NoMove;
@@ -11,12 +11,11 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 import misc.Pair;
 import misc.Saver;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.BitSet;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board implements Serializable{
     private Piece[][] board;
@@ -30,6 +29,10 @@ public class Board implements Serializable{
 
 
     private Board (Piece[][] board) {
+        this(board, 0, "", PieceColor.WHITE, 0);
+    }
+
+    private Board (Piece[][] board, int fiftyMoveReset, String lastMoveString, PieceColor turn, int moveCount) {
         this.dimX = board[0].length;
         this.dimY = board.length;
 
@@ -37,7 +40,7 @@ public class Board implements Serializable{
         this.board = board;
 
         Pair<Position, Position> kingPositions = findKings();
-        stateHistory = new BoardStateHistory(new BoardState(kingPositions.getFirst(), kingPositions.getSecond(), 0, new NoMove()));
+        stateHistory = new BoardStateHistory(new BoardState(kingPositions.getFirst(), kingPositions.getSecond(), fiftyMoveReset, Move.parseMove(lastMoveString, turn.invert(), this), turn, moveCount));
     }
 
 
@@ -45,20 +48,58 @@ public class Board implements Serializable{
         return fromFile(path, BoardNotation.DEFAULT_NOTATION);
     }
 
+    public static final String LAST_MOVE = "last_move";
+    public static final String FIFTY_MOVE_RESET = "fifty_move_reset";
+    public static final String MOVECOUNT = "movecount";
+
     public static Board fromFile (String path, BoardNotation boardNotation) {
-        String[] lines = Reader.readFile(path).split("\n");
+        String[] lines = ReadWriter.readFile(path).split("\n");
 
         Piece[][] buffer = new Piece[8][8];
 
-            for (int y = 0; y < 8; y++) {
-                String[] line = lines[7 - y].split("( )+");
+        for (int y = 0; y < 8; y++) {
+            String[] line = lines[7 - y].split("( )+");
 
             for (int x = 0; x < 8; x++) {
                 buffer[y][x] = boardNotation.getPiece(line[x]);
             }
         }
 
-        return new Board(buffer);
+        String lastMoveString = "";
+        int movesSince50Reset = 0;
+        int moveCount = 0;
+
+
+        PieceColor turn = null;
+        loop: for (String line : lines) {
+            switch (line.toUpperCase()) {
+                case "WHITE":
+                    turn = PieceColor.WHITE;
+                    break loop;
+                case "BLACK":
+                    turn = PieceColor.BLACK;
+                    break loop;
+            }
+        }
+
+        Objects.requireNonNull(turn);
+
+        for (String line : lines) {
+            switch (line.split("( )+")[0]) {
+                case LAST_MOVE:
+                    lastMoveString = line.split("( )+")[1];
+                    break;
+                case FIFTY_MOVE_RESET:
+                    movesSince50Reset = Integer.parseInt(line.split("( )+")[1]) * 2;
+                    break;
+                case MOVECOUNT:
+                    moveCount = (Integer.parseInt(line.split("( )+")[1]) - 1) * 2;
+            }
+        }
+
+
+
+        return new Board(buffer, movesSince50Reset, lastMoveString, turn, moveCount);
     }
 
     private Pair<Position, Position> findKings () {
@@ -112,7 +153,7 @@ public class Board implements Serializable{
 
 
     public boolean isMoveLegal (Move move) {
-        boolean result = getPieceInSquare(move.getOrigin()).getPossibleMoves(this, move.getOrigin(), getLastMove()).contains(move);
+        boolean result = move.getColor() == getTurn() && getPieceInSquare(move.getOrigin()).getPossibleMoves(this, move.getOrigin(), getLastMove()).contains(move);
         if (result) {
             executeMove(move);
             boolean isStateLegal = !isCheck(move.getColor());
@@ -179,6 +220,8 @@ public class Board implements Serializable{
         }
 
         stateHistory.getCurrentState().setLastMove(move);
+        stateHistory.getCurrentState().setTurn(stateHistory.getCurrentState().getTurn().invert());
+        stateHistory.getCurrentState().setMoveCount(stateHistory.getCurrentState().getMoveCount() + 1);
 
         repetitionTracker.add(this);
 
@@ -193,6 +236,7 @@ public class Board implements Serializable{
 
     private void undo (Move lastMove) {
         repetitionTracker.subtract(this);
+        stateHistory.getCurrentState().setTurn(stateHistory.getCurrentState().getTurn().invert());
         lastMove.unmakeMove(board);
     }
 
@@ -218,7 +262,8 @@ public class Board implements Serializable{
     }
 
     public boolean isDraw (PieceColor turn) {
-        return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 50 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
+        // 100 half moves equal 50 whole moves
+        return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 100 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
     }
 
     public boolean isDrawNoStalemateCheck (PieceColor turn) {
@@ -280,11 +325,15 @@ public class Board implements Serializable{
     }
 
     public Board deepCopy () {
-        return new Saver<Board>().deepCopy(this, Board.class);
+        return Saver.deepCopy(this, Board.class);
     }
 
     public Move getLastMove () {
         return stateHistory.getCurrentState().getLastMove();
+    }
+
+    public PieceColor getTurn () {
+        return stateHistory.getCurrentState().getTurn();
     }
 
     public int getDimX () {
@@ -301,5 +350,61 @@ public class Board implements Serializable{
 
     public BoardStateHistory getStateHistory () {
         return stateHistory;
+    }
+
+    private String humanReadableDump() {
+        StringBuilder builder = new StringBuilder();
+
+        for (int y = dimY - 1; y >= 0; y--) {
+            if (y < dimY - 1) {
+                builder.append("\n");
+            }
+
+            for (int x = 0; x < board[y].length; x++) {
+                builder.append(board[y][x]);
+
+                if (x + 1 < board[y].length) {
+                    builder.append(" ");
+                }
+            }
+        }
+
+        builder.append("\n");
+
+        builder.append(stateHistory.getCurrentState().getTurn()).append("\n");
+        builder.append(FIFTY_MOVE_RESET).append(" ").append(stateHistory.getCurrentState().getMovesSinceFiftyMoveReset()).append("\n");
+        builder.append(LAST_MOVE).append(" ").append(getLastMove()).append("\n");
+
+        return builder.toString();
+    }
+
+    public void saveHumanReadable (String path) {
+        ReadWriter.writeFile(path, humanReadableDump());
+    }
+
+    public List<Move> getMoveHistory () {
+        return stateHistory.getPreviousStates().stream().map(BoardState::getLastMove).filter(move -> !new NoMove().equals(move)).collect(Collectors.toList());
+    }
+
+    public String getMoveHistoryPretty () {
+        var states = stateHistory.getPreviousStates().stream().filter(state -> !new NoMove().equals(state.getLastMove())).collect(Collectors.toList());
+        Collections.reverse(states);
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < states.size(); i++) {
+            BoardState currentState = states.get(i);
+            if (i % 2 == 0) {
+                builder.append((currentState.getMoveCount() + 1) / 2).append(". ");
+            }
+            if (i == 0 && states.get(i).getLastMove().getColor() == PieceColor.BLACK) {
+                builder.append("... ");
+                i += 1;
+            }
+
+            builder.append(currentState.getLastMove()).append(" ");
+        }
+
+        return builder.toString();
     }
 }

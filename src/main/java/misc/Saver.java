@@ -2,8 +2,8 @@ package misc;
 
 import java.io.*;
 
-public class Saver<T extends Serializable> implements Serializable {
-    public String save (T object, String path, boolean relative) {
+public class Saver implements Serializable {
+    public static <T extends Serializable> String save (T object, String path, boolean relative) {
         if (relative) {
 //            path = System.getProperty("user.dir") + "/src/main/resources/boards/" + name + ".ser";
             path = System.getProperty("user.dir") + path;
@@ -40,26 +40,21 @@ public class Saver<T extends Serializable> implements Serializable {
         return path;
     }
 
-    public T fromFile (String path, boolean relative) {
-        String absolutePath;
-
-        if (relative) {
-            absolutePath = System.getProperty("user.dir") + path;
-        } else {
-            absolutePath = path;
-        }
-
-
+    public static <T extends Serializable> T fromFile (String path, Class<T> tClass) {
         T recovered;
+
         try {
-            FileInputStream fileIn = new FileInputStream(absolutePath);
+            FileInputStream fileIn = new FileInputStream(path);
 
             ObjectInputStream in = new ObjectInputStream(fileIn);
             try {
                 Object obj = in.readObject();
 
-                //noinspection unchecked
-                recovered = (T) obj;
+                if (tClass.isInstance(obj)) {
+                    recovered = tClass.cast(obj);
+                } else {
+                    throw new ClassCastException();
+                }
 
             } catch (ClassCastException | ClassNotFoundException e) {
                 throw new RuntimeException("No valid object found!");
@@ -74,7 +69,7 @@ public class Saver<T extends Serializable> implements Serializable {
         return recovered;
     }
 
-    public T deepCopy (T object, Class<T> targetClass) {
+    public static <T> T deepCopy (T object, Class<T> targetClass) {
         T newObject;
 
         try {
@@ -103,4 +98,6 @@ public class Saver<T extends Serializable> implements Serializable {
 
         return newObject;
     }
+
+
 }

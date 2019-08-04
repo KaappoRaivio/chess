@@ -5,6 +5,7 @@ import chess.misc.exceptions.StopException;
 import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Runner {
@@ -12,11 +13,13 @@ public class Runner {
     private CapableOfPlaying[] players;
     private UI ui;
     private int moveCount;
+    private List<Spectator> spectators;
 
-    public Runner (Board board, CapableOfPlaying[] players, UI ui) {
+    public Runner(Board board, CapableOfPlaying[] players, UI ui, List<Spectator> spectators) {
         this.board = board;
         this.players = players;
         this.ui = ui;
+        this.spectators = spectators;
         moveCount = 0;
 
     }
@@ -46,7 +49,7 @@ public class Runner {
                 try {
 //                    System.out.println(board.getAllPossibleMoves(turn));
                     Move move = currentPlayer.getMove();
-                    System.out.println(move);
+                    System.out.println("Move is: " + move);
                     board.makeMove(move);
                     break;
                 } catch (StopException e) {
@@ -58,8 +61,14 @@ public class Runner {
                 }
             }
 
+            System.out.println(board.getMoveHistoryPretty());
+
             turn = turn.invert();
             moveCount += 1;
+
+            int finalMoveCount = moveCount;
+            PieceColor finalTurn = turn;
+            spectators.forEach(spectator -> spectator.spectate(board.deepCopy(), finalMoveCount, finalTurn));
 
 
             for (CapableOfPlaying player : players) {

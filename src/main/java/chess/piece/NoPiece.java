@@ -1,7 +1,6 @@
 package chess.piece;
 
 import chess.board.Board;
-import chess.misc.exceptions.ChessException;
 import chess.misc.Position;
 import chess.move.Move;
 import chess.piece.basepiece.Piece;
@@ -22,8 +21,8 @@ public class NoPiece extends Piece {
     }
 
     @Override
-    protected int[][] getPieceSquareTable () {
-        return new int[8][8];
+    protected double[][] getPieceSquareTable () {
+        return new double[8][8];
     }
 
     @Override

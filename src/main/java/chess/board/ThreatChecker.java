@@ -31,52 +31,58 @@ public class ThreatChecker {
         int x = square.getX();
         int y = square.getY();
 
-        for (int checkY = y; checkY < board.getDimY(); checkY++) {
+        for (int checkY = y + 1; checkY < board.getDimY(); checkY++) {
             Piece currentPiece = board.getPieceInSquare(new Position(x, checkY));
 
-            if (currentPiece.getColor() == piece.getColor()) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
                 if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
         }
 
-        for (int checkY = y; checkY >= 0; checkY--) {
+        for (int checkY = y - 1; checkY >= 0; checkY--) {
             Piece currentPiece = board.getPieceInSquare(new Position(x, checkY));
 
-            if (currentPiece.getColor() == piece.getColor()) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
                 if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
         }
 
-        for (int checkX = x; checkX < board.getDimX(); checkX++) {
+        for (int checkX = x + 1; checkX < board.getDimX(); checkX++) {
             Piece currentPiece = board.getPieceInSquare(new Position(checkX, y));
 
-            if ((currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) && currentPiece.getColor() == piece.getColor().invert()) {
-                return true;
-            }
-        }
-
-        for (int checkX = x; checkX >= 0; checkX--) {
-            Piece currentPiece = board.getPieceInSquare(new Position(checkX, y));
-
-            if (currentPiece.getColor() == piece.getColor()) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
                 if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
+                break;
+            }
+        }
+
+        for (int checkX = x - 1; checkX >= 0; checkX--) {
+            Piece currentPiece = board.getPieceInSquare(new Position(checkX, y));
+
+            if (currentPiece.getColor() == piece.getColor().invert()) {
+                if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
+                    return true;
+                } else {
+                    break;
+                }
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
         }
@@ -90,19 +96,19 @@ public class ThreatChecker {
         int x = square.getX();
         int y = square.getY();
 
-        int checkX = x;
-        int checkY = y;
+        int checkX = x + 1;
+        int checkY = y + 1;
 
         while (checkX < board.getDimX() && checkY < board.getDimY()) {
             Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
-            if (currentPiece.getColor() == piece.getColor()) {
-                if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
+                if (currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
 
@@ -110,19 +116,19 @@ public class ThreatChecker {
             checkY += 1;
         }
 
-        checkX = x;
-        checkY = y;
+        checkX = x + 1;
+        checkY = y - 1;
 
         while (checkX < board.getDimX() && checkY >= 0) {
             Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
-            if (currentPiece.getColor() == piece.getColor()) {
-                if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
+                if (currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
 
@@ -130,19 +136,19 @@ public class ThreatChecker {
             checkY -= 1;
         }
 
-        checkX = x;
-        checkY = y;
+        checkX = x - 1;
+        checkY = y - 1;
 
         while (checkX >= 0 && checkY >= 0) {
             Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
-            if (currentPiece.getColor() == piece.getColor()) {
-                if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
+                if (currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
 
@@ -150,19 +156,19 @@ public class ThreatChecker {
             checkY -= 1;
         }
 
-        checkX = x;
-        checkY = y;
+        checkX = x - 1;
+        checkY = y + 1;
 
         while (checkX >= 0 && checkY < board.getDimY()) {
             Piece currentPiece = board.getPieceInSquare(new Position(checkX, checkY));
 
-            if (currentPiece.getColor() == piece.getColor()) {
-                if (currentPiece.getType() == PieceType.ROOK || currentPiece.getType() == PieceType.QUEEN) {
+            if (currentPiece.getColor() == piece.getColor().invert()) {
+                if (currentPiece.getType() == PieceType.BISHOP || currentPiece.getType() == PieceType.QUEEN) {
                     return true;
                 } else {
                     break;
                 }
-            } else if (currentPiece.getColor() == piece.getColor().invert()) {
+            } else if (currentPiece.getColor() == piece.getColor()) {
                 break;
             }
 
@@ -232,6 +238,12 @@ public class ThreatChecker {
 
         return right != null && right.getType() == PieceType.PAWN && right.getColor() == piece.getColor().invert()
             ||  left != null && left.getType() == PieceType.PAWN &&  left.getColor() == piece.getColor().invert();
+    }
+
+    public static void main(String[] args) {
+        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/1564930703584.out");
+
+        System.out.println(board.isCheck(PieceColor.BLACK));
     }
 
 }

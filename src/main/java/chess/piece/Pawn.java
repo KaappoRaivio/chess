@@ -6,10 +6,12 @@ import chess.misc.Position;
 import chess.move.EnPassantMove;
 import chess.move.Move;
 import chess.move.NormalMove;
+import chess.move.PromotionMove;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -25,22 +27,36 @@ public class Pawn extends Piece {
         moves.addAll(handleStraightAhead(board, position));
         moves.addAll(handleCapture(board, position));
         moves.addAll(handleEnPassant(board, position, lastMove));
+        moves.addAll(handlePromotion(board, position));
 
         return moves;
     }
 
     @Override
-    protected int[][] getPieceSquareTable () {
-        return new int[][]{
-                {0,  0,  0,  0,  0,  0,  0,  0},
-                {5, 10, 10,-20,-20, 10, 10,  5},
-                {5, -5,-10,  0,  0,-10, -5,  5},
-                {0,  0,  0, 20, 20,  0,  0,  0},
-                {5,  5, 10, 25, 25, 10,  5,  5},
-                {10, 10, 20, 30, 30, 20, 10, 10},
-                {50, 50, 50, 50, 50, 50, 50, 50},
-                {0,  0,  0,  0,  0,  0,  0,  0}
+    protected double[][] getPieceSquareTable () {
+        return new double[][]{
+                {-0.43, -0.43, -0.43, -0.43, -0.43, -0.43, -0.43, -0.43},
+                {-0.29, -0.14, -0.14, -1.0 , -1.0 , -0.14, -0.14, -0.29},
+                {-0.29, -0.57, -0.71, -0.43, -0.43, -0.71, -0.57, -0.29},
+                {-0.43, -0.43, -0.43,  0.14,  0.14, -0.43, -0.43, -0.43},
+                {-0.29, -0.29, -0.14,  0.29,  0.29, -0.14, -0.29, -0.29},
+                { 0.14,  0.14,  0.14,  0.43,  0.43,  0.14,  0.14,  0.14},
+                { 3.0,   3.0 ,  3.0 ,  3.0 ,  3.0 ,  3.0 ,  3.0 ,  3.0 },
+                {-0.43, -0.43, -0.43, -0.43, -0.43, -0.43, -0.43, -0.43},
+
         };
+    }
+
+    private Set<Move> handlePromotion (Board board, Position position) {
+        if (position.getY() == getEndFlank() - getForwardDirection() && board.isSquareEmpty(position.offsetY(getForwardDirection()))) {
+            return Set.of(new PromotionMove(position, position.offsetY(getForwardDirection()), board, PieceType.QUEEN),
+                    new PromotionMove(position, position.offsetY(getForwardDirection()), board, PieceType.ROOK),
+                    new PromotionMove(position, position.offsetY(getForwardDirection()), board, PieceType.BISHOP),
+                    new PromotionMove(position, position.offsetY(getForwardDirection()), board, PieceType.KNIGHT)
+            );
+        } else {
+            return Collections.emptySet();
+        }
     }
 
     private Set<Move> handleStraightAhead (Board board, Position position) {
@@ -121,6 +137,17 @@ public class Pawn extends Piece {
             return getColor() == PieceColor.WHITE ? 12 : 13;
         } else {
             return super.getIndex(board, position, lastMove);
+        }
+    }
+
+    private int getEndFlank () {
+        switch (color) {
+            case WHITE:
+                return 7;
+            case BLACK:
+                return 0;
+            default:
+                throw new ChessException("");
         }
     }
 }

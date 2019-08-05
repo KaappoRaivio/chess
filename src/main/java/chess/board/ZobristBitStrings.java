@@ -48,4 +48,15 @@ public class ZobristBitStrings implements Serializable {
         }
         return bitInteger;
     }
+
+    public static long bitSetToLong (BitSet bitSet) {
+        long bitLong = 0;
+
+        for (int i = 0; i < 64; i++){
+            if (bitSet.get(i)) {
+                bitLong |= (1 << i);
+            }
+        }
+        return bitLong;
+    }
 }

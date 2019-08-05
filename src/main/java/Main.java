@@ -14,8 +14,11 @@ import java.util.Arrays;
 
 public class Main {
     public static void main (String[] args) {
-//        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
-        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos10.txt", BoardNotation.DEFAULT_NOTATION);
+        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
+//        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos11.txt", BoardNotation.DEFAULT_NOTATION);
+//        System.out.println(board.isCheckMate(PieceColor.WHITE));
+//        System.out.println(board.getAllPossibleMoves(PieceColor.WHITE));
+//        System.exit(0);
 //        Board board = Saver.fromFile("/home/kaappo/git/chess/src/main/resources/serialized_boards/1564943212850.out", Board.class);
         //f8d6
 //        Board board = Saver.fromFile("/home/kaappo/git/chess/src/main/resources/serialized_boards/1564926519867.out", Board.class);
@@ -45,7 +48,7 @@ public class Main {
                 new TreeAI(PieceColor.BLACK, "tree ai", ui, 2),
         };
 
-        Runner runner = new Runner(board, players, ui, Arrays.asList(new TreeAI(PieceColor.WHITE, "white spectator", ui, 2), new TreeAI(PieceColor.BLACK, "white spectator", ui, 2)));
+        Runner runner = new Runner(board, players, ui, Arrays.asList(new TreeAI(PieceColor.WHITE, "white spectator", ui, 10), new TreeAI(PieceColor.BLACK, "white spectator", ui, 2)));
         try {
             runner.play(PieceColor.WHITE);
         } catch (StopException e) {

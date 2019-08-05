@@ -11,7 +11,6 @@ import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 import misc.Pair;
 import misc.Saver;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -297,9 +296,8 @@ public class Board implements Serializable{
         return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).toString();
     }
 
-    @Override
-    public int hashCode () {
-        BitSet result = new BitSet(32);
+    public long customHashCode () {
+        BitSet result = new BitSet(64);
 
         for (int y = 0; y < board.length; y++) {
             for (int x = 0; x < board[y].length; x++) {
@@ -312,7 +310,12 @@ public class Board implements Serializable{
             }
         }
 
-        return ZobristBitStrings.bitSetToInt(result);
+        return ZobristBitStrings.bitSetToLong(result);
+    }
+
+    @Override
+    public int hashCode () {
+        return (int) customHashCode();
     }
 
     @Override
@@ -321,7 +324,7 @@ public class Board implements Serializable{
             return false;
         }
 
-        return getClass() == object.getClass() && hashCode() == object.hashCode();
+        return getClass() == object.getClass() && customHashCode() == object.hashCode();
     }
 
     public Board deepCopy () {

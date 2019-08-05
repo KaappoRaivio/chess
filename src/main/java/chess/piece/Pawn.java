@@ -61,6 +61,9 @@ public class Pawn extends Piece {
 
     private Set<Move> handleStraightAhead (Board board, Position position) {
         Set<Move> moves = new LinkedHashSet<>();
+        if (position.getY() == getEndFlank() - getForwardDirection()) {
+            return moves;
+        }
         try {
             if (board.isSquareEmpty(position.offsetY(getForwardDirection()))) {
                 moves.add(new NormalMove(position, position.offsetY(getForwardDirection()), board));

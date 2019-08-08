@@ -1,4 +1,4 @@
-package players;
+package players.alphabetaai;
 
 public class TranspositionTableEntry {
     private int depth;

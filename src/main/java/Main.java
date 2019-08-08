@@ -4,13 +4,14 @@ import chess.misc.exceptions.StopException;
 import chess.piece.basepiece.PieceColor;
 import misc.Saver;
 import players.Player;
-import players.TreeAI;
+import players.alphabetaai.TreeAIInterface;
 import runner.CapableOfPlaying;
 import runner.Runner;
 import runner.UI;
 import ui.TtyUI;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Main {
     public static void main (String[] args) {
@@ -45,10 +46,10 @@ public class Main {
         UI ui = new TtyUI();
         CapableOfPlaying[] players = {
                 new Player(PieceColor.WHITE, "AskoChess", ui),
-                new TreeAI(PieceColor.BLACK, "tree ai", ui, 2),
+                new TreeAIInterface(PieceColor.BLACK, "tree ai", ui, 3),
         };
 
-        Runner runner = new Runner(board, players, ui, Arrays.asList(new TreeAI(PieceColor.WHITE, "white spectator", ui, 10), new TreeAI(PieceColor.BLACK, "white spectator", ui, 2)));
+        Runner runner = new Runner(board, players, ui, Collections.emptyList());
         try {
             runner.play(PieceColor.WHITE);
         } catch (StopException e) {

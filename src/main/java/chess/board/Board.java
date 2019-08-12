@@ -26,6 +26,8 @@ public class Board implements Serializable{
 
     private BoardStateHistory stateHistory;
 
+    transient private Pair<Set<Move>, Set<Move>> possibleMoves = new Pair<>(null, null);
+
 
     private Board (Piece[][] board) {
         this(board, 0, "", PieceColor.WHITE, 0);
@@ -166,6 +168,28 @@ public class Board implements Serializable{
 
 
     public Set<Move> getAllPossibleMoves (PieceColor color) {
+        if (possibleMoves == null) {
+            possibleMoves = new Pair<>(null, null);
+        }
+        switch (color) {
+            case WHITE:
+                if (possibleMoves.getFirst() == null) {
+                    possibleMoves = new Pair<>(getAllPossibleMoves0(color), possibleMoves.getSecond());
+                }
+
+                return possibleMoves.getFirst();
+            case BLACK:
+                if (possibleMoves.getSecond() == null) {
+                    possibleMoves = new Pair<>(possibleMoves.getFirst(), getAllPossibleMoves0(color));
+                }
+
+                return possibleMoves.getSecond();
+        }
+
+        throw new ChessException("No NoColor!");
+    }
+
+    private Set<Move> getAllPossibleMoves0 (PieceColor color) {
         Set<Move> moves = new LinkedHashSet<>();
 
         for (int y = 0; y < dimX; y++) {
@@ -182,8 +206,11 @@ public class Board implements Serializable{
                 }
             }
         }
-
-        return moves;
+//        if (moves.size() > 20) {
+//            return new HashSet<>(new ArrayList<>(moves).subList(0, 20));
+//        } else {
+            return moves;
+//        }
     }
 
     public void makeMove (Move move) {
@@ -195,6 +222,8 @@ public class Board implements Serializable{
     }
 
     private void executeMove (Move move) {
+        possibleMoves = new Pair<>(null, null);
+
         move.makeMove(board);
 
         stateHistory.push();
@@ -310,6 +339,7 @@ public class Board implements Serializable{
             }
         }
 
+//        return getTurn() == PieceColor.WHITE ? ZobristBitStrings.bitSetToLong(result) : -ZobristBitStrings.bitSetToLong(result);
         return ZobristBitStrings.bitSetToLong(result);
     }
 

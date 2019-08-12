@@ -33,6 +33,7 @@ public class TreeAIInterface extends Player {
     @Override
     public Move getMove() {
         List<Move> allPossibleMoves = new ArrayList<>(board.getAllPossibleMoves(color));
+//        List<Move> allPossibleMoves = Collections.singletonList(Move.parseMove("g4h3", PieceColor.BLACK, board));
 
         List<WorkerThread> threads = new ArrayList<>();
 
@@ -75,10 +76,23 @@ public class TreeAIInterface extends Player {
 
         System.out.println("Took " + duration + " seconds, evaluated " + positionsExamined + " positions in total, " + positionsExamined / duration + " positions per second.");
 
-        return results
-                .stream()
-                .max(Comparator.comparingDouble(Quadruple::getThird))
-                .orElseThrow()
+        Quadruple<Board, Move, Double, Integer> result;
+
+        if (color == PieceColor.WHITE) {
+            result = results
+                    .stream()
+                    .max(Comparator.comparingDouble(Quadruple::getThird))
+                    .orElseThrow();
+        } else {
+            result = results
+                    .stream()
+                    .min(Comparator.comparingDouble(Quadruple::getThird))
+                    .orElseThrow();
+        }
+
+        System.out.println(result.getThird());
+
+        return result
                 .getSecond();
 
     }

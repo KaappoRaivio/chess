@@ -35,10 +35,12 @@ public class Pair<K, V> implements Serializable {
     }
 
     public K getFirst () {
-        return Optional.ofNullable(first).orElseThrow(() -> new NullPointerException("The first field is null!"));
+        return first;
+//        return Optional.ofNullable(first).orElseThrow(() -> new NullPointerException("The first field is null!"));
     }
 
     public V getSecond () {
-        return Optional.ofNullable(second).orElseThrow(() -> new NullPointerException("The second field is null!"));
+        return second;
+//        return Optional.ofNullable(second).orElseThrow(() -> new NullPointerException("The second field is null!"));
     }
 }

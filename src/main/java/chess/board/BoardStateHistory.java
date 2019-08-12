@@ -28,7 +28,14 @@ public class BoardStateHistory implements Serializable {
         return Optional.ofNullable(states.peek()).orElseThrow();
     }
 
-    List<BoardState> getPreviousStates() {
+    public List<BoardState> getPreviousStates () {
         return (List<BoardState>) states;
+    }
+
+    @Override
+    public String toString () {
+        return "BoardStateHistory{" +
+                "states=" + states +
+                '}';
     }
 }

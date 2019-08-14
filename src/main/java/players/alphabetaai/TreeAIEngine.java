@@ -69,7 +69,10 @@ public class TreeAIEngine implements AI {
                 }
             }
         } else {
+            if (searchedPositions >= 1000) {
             System.out.println(Long.valueOf(board.customHashCode()));
+
+            }
         }
 
 
@@ -96,7 +99,7 @@ public class TreeAIEngine implements AI {
                 board.makeMove(move);
 
                 value = min(value, minimax(board, depth - 1, true, alpha, beta));
-                beta = min(value, beta);
+                 beta = min(value, beta);
 
                 board.unMakeMove(1);
 

@@ -17,6 +17,7 @@ public class TreeAIInterface extends Player {
     private static final int sizeLimit = 1000000;
 
     private static final boolean debug = false;
+//    private static final int amountOfCPUs = 1;
     private static final int amountOfCPUs = Runtime.getRuntime().availableProcessors();
     private final int depth;
 

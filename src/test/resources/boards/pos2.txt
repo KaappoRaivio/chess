@@ -1,0 +1,10 @@
+R N B Q K B N R
+P P P P P P P P
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+p p p p p p p p
+r . . . k . . r
+
+WHITE

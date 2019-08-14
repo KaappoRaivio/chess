@@ -1,0 +1,12 @@
+R̅ . . Q K̅ B N R̅
+P P P . . P P P
+. . N P . . . .
+. . . . n . . .
+. . b . N . B .
+. . n . . p . .
+p p p p . . p p
+r̅ . b q k̅ . . r̅
+
+WHITE
+
+last_move f3e5

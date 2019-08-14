@@ -12,7 +12,7 @@ public class WorkerThread extends Thread {
 
     private List<Move> movesToTest;
     private Board board;
-    private AI callback;
+    volatile private AI callback;
     private List<Quadruple<Board, Move, Double, Integer>> result;
 
     WorkerThread(List<Move> movesToTest, Board board, AI callback) {

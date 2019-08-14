@@ -16,12 +16,12 @@ import java.util.Collections;
 
 public class Main {
     public static void main (String[] args) {
-//        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
+        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
 //        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos11.txt", BoardNotation.DEFAULT_NOTATION);
 //        System.out.println(board.isCheckMate(PieceColor.WHITE));
 //        System.exit(0);
-        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/1565344171878.out");
-        board.makeMove(Move.parseMove("d1b1", PieceColor.WHITE, board));
+//        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/1565344171878.out");
+//        board.makeMove(Move.parseMove("d1b1", PieceColor.WHITE, board) );
 //        board.unMakeMove(1);
 //        System.out.println(board.getAllPossibleMoves(PieceColor.WHITE));
         //f8d6

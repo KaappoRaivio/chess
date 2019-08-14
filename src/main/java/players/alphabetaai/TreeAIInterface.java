@@ -11,6 +11,7 @@ import players.Player;
 import runner.UI;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TreeAIInterface extends Player {
     private static final int sizeLimit = 1000000;
@@ -20,7 +21,7 @@ public class TreeAIInterface extends Player {
     private final int depth;
 
 
-    private ConcurrentLinkedHashMap<Long, TranspositionTableEntry> transpositionTable;
+    volatile private ConcurrentLinkedHashMap<Long, TranspositionTableEntry> transpositionTable;
 
 
     public TreeAIInterface(PieceColor color, String name, UI ui, int depth) {
@@ -78,22 +79,27 @@ public class TreeAIInterface extends Player {
 
         Quadruple<Board, Move, Double, Integer> result;
 
-        if (color == PieceColor.WHITE) {
-            result = results
-                    .stream()
-                    .max(Comparator.comparingDouble(Quadruple::getThird))
-                    .orElseThrow();
-        } else {
-            result = results
-                    .stream()
-                    .min(Comparator.comparingDouble(Quadruple::getThird))
-                    .orElseThrow();
-        }
+        result = results
+                .stream()
+                .map((Quadruple<Board, Move, Double, Integer> b) -> new Quadruple<>(b.getFirst(), b.getSecond(), Math.abs(b.getThird()), b.getFourth()))
+                .min(Comparator.comparingDouble(Quadruple::getThird))
+                .orElseThrow();
 
-        System.out.println(result.getThird());
-
-        return result
-                .getSecond();
+        System.out.println(transpositionTable.size());
+        System.out.println(transpositionTable.keySet());
+        return result.getSecond();
+//        if (color == PieceColor.WHITE) {
+//        } else {
+//            result = results
+//                    .stream()
+//                    .min(Comparator.comparingDouble(Quadruple::getThird))
+//                    .orElseThrow();
+//        }
+//
+//        System.out.println(result.getThird());
+//
+//        return result
+//                .getSecond();
 
     }
 }

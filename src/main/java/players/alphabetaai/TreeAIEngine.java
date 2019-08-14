@@ -5,7 +5,6 @@ import chess.misc.Position;
 import chess.misc.Quadruple;
 import chess.misc.Triple;
 import chess.move.Move;
-import chess.piece.Bishop;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
@@ -13,6 +12,7 @@ import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
@@ -20,104 +20,101 @@ import static java.lang.Math.min;
 
 public class TreeAIEngine implements AI {
     private int depth;
+    private final PieceColor color;
     volatile private ConcurrentLinkedHashMap<Long, TranspositionTableEntry> transpositionTable;
     private int tableHits = 0;
     private int searchedPositions = 0;
 
     TreeAIEngine (int depth, PieceColor color, ConcurrentLinkedHashMap<Long, TranspositionTableEntry> transpositionTable) {
         this.depth = depth;
+        this.color = color;
 
         this.transpositionTable = transpositionTable;
     }
     private double searchAndEvaluate(Board board) {
-        return negamax(board, depth, -1e10, 1e10, board.getTurn());
+//        System.out.println(board.getTurn());
+        return minimax(board, depth, board.getTurn() == color, -1e10, +1e10);
     }
 
-    private double negamax (Board board, int depth, double alpha, double beta, PieceColor turn) {
-        searchedPositions += 1;
+    private double minimax (Board board, int depth, boolean maximizingPlayer, double alpha, double beta) {
+        ++searchedPositions;
+        PieceColor turn = maximizingPlayer ? color : color.invert();
+
+        if (depth <= 0 || board.isEndOfGame(turn)) {
+            return evaluateCurrentPosition(board);
+        }
+
         double alphaOrig = alpha;
+        double  betaOrig = beta;
 
-//        if (hasValidEntry(board)) {
-//            var entry = getEntry(board);
-//            if (entry.getDepth() >= depth) {
-//                switch (entry.getBound()) {
-//                    case EXACT:
-//                        tableHits += 1;
-//
-//                        return entry.getValue();
-//                    case LOWER:
-//                        tableHits += 1;
-//                        alpha = max(alpha, entry.getValue());
-//                        break;
-//                    case UPPER:
-//                        tableHits += 1;
-//                        beta = min(beta, entry.getValue());
-//                        break;
-//                }
-//
-//                if (alpha >= beta) {
-//
-//                    return entry.getValue();
-//                }
-//            }
-//        }
-//
+        if (hasValidEntry(board)) {
+            System.out.println("Valid");
+            var entry = getEntry(board);
+            if (entry.getDepth() >= depth) {
+                switch (entry.getBound()) {
+                    case EXACT:
+                        tableHits += 1;
+                        return entry.getValue();
+                    case LOWER:
+                        alpha = max(alpha, entry.getValue());
+                        break;
+                    case UPPER:
+                        beta = min(beta, entry.getValue());
+                        break;
+                }
 
-
-        if (board.isDraw(turn)) {
-            // 0.0 for draw
-            return 0.0;
-        } else if (board.isCheckMate(turn)) {
-            // Checkmates closer to the origin position are valued more
-            if (board.getPieceInSquare(Position.fromString("h3")).equals(new Bishop(PieceColor.BLACK))) {
-                System.out.println("Breakpoint!");
+                if (alpha >= beta) {
+                    tableHits += 1;
+                    return entry.getValue();
+                }
             }
-
-            System.out.println("Checkmate for " + turn);
-            System.out.println(board);
-            System.out.println(board.getMoveHistoryPretty());
-            System.out.println((depth + 1) * (turn == PieceColor.WHITE ? -1e10 : 1e10) + ", " + (turn == PieceColor.WHITE));
-
-
-
-            return (depth + 1) * (turn == PieceColor.WHITE ? -1e10 : 1e10);
-        } else if (depth <= 0) {
-//            System.out.println("Evaluating board!");
-//            System.out.println(board);
-//            System.out.println(evaluateCurrentPosition(board) * turn.getValue());
-            return turn.getValue() * evaluateCurrentPosition(board);
+        } else {
+            System.out.println(Long.valueOf(board.customHashCode()));
         }
 
-        double value = -1e10;
 
-        for (Move move : board.getAllPossibleMoves(turn)) {
-            board.makeMove(move);
+        double value;
+        if (maximizingPlayer) {
+            value = -1e10;
 
-            double result = negamax(board, depth - 1, -beta, -alpha, turn.invert());
-            if (Math.abs(result) > Math.abs(value)) {
-                value = -result;
+            for (Move move : board.getAllPossibleMoves(turn)) {
+                board.makeMove(move);
+
+                value = max(value, minimax(board, depth - 1, false, alpha, beta));
+                alpha = max(value, alpha);
+
+                board.unMakeMove(1);
+
+                if (alpha >= beta) {
+                    break;
+                }
             }
-//            value = max(value, -result);
-            alpha = max(value, alpha);
+        } else {
+            value = +1e10;
 
-            board.unMakeMove(1);
+            for (Move move : board.getAllPossibleMoves(turn)) {
+                board.makeMove(move);
 
-//            if (Math.abs(alpha) >= Math.abs(beta)) {
-//                break;
-//            }
+                value = min(value, minimax(board, depth - 1, true, alpha, beta));
+                beta = min(value, beta);
+
+                board.unMakeMove(1);
+
+                if (alpha >= beta) {
+                    break;
+                }
+            }
         }
 
-//        Bound bound;
-//        if (value <= alphaOrig) {
-//            bound = Bound.UPPER;
-//        } else if (value >= beta) {
-//            bound = Bound.LOWER;
-//        } else {
-//            bound = Bound.EXACT;
-//        }
-//        transpositionTableStore(board, new TranspositionTableEntry(depth, bound, value));
-
-
+        Bound bound;
+        if (value <= alphaOrig) {
+            bound = Bound.UPPER;
+        } else if (value >= betaOrig) {
+            bound = Bound.LOWER;
+        } else {
+            bound = Bound.EXACT;
+        }
+        transpositionTableStore(board, new TranspositionTableEntry(depth, bound, value));
         return value;
     }
 
@@ -127,7 +124,7 @@ public class TreeAIEngine implements AI {
     }
 
     private boolean hasValidEntry (Board board) {
-        return transpositionTable.containsKey(board.customHashCode());
+        return transpositionTable.get(board.customHashCode()) != null;
     }
 
     private TranspositionTableEntry getEntry (Board board) {
@@ -135,6 +132,16 @@ public class TreeAIEngine implements AI {
     }
 
     private double evaluateCurrentPosition(Board board) {
+        if (board.isDraw(board.getTurn())) {
+            return 0.0;
+        } else if (board.isCheckMate(PieceColor.WHITE)) {
+            System.out.println("Checkmate for white: " + board);
+            return -1e10;
+        } else if (board.isCheckMate(PieceColor.BLACK)) {
+            System.out.println("Checkmate for black: " + board);
+            return 1e10;
+        }
+
         double sum = 0;
 
         for (int y = 0; y < board.getDimY(); y++) {
@@ -146,7 +153,7 @@ public class TreeAIEngine implements AI {
             }
         }
 
-        return sum;
+        return sum * board.getTurn().getValue();
     }
 
     @Override

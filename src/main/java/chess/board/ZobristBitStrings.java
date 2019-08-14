@@ -9,12 +9,12 @@ import java.util.Random;
 public class ZobristBitStrings implements Serializable {
     private BitSet[][] bitSets;
     private Random random = new Random(13253453462L);
-    private final int length = 32;
+    final static int length = 64;
 
 
     private static ZobristBitStrings ourInstance = new ZobristBitStrings();
 
-    public static ZobristBitStrings getInstance () {
+    static ZobristBitStrings getInstance () {
         return ourInstance;
     }
 
@@ -34,11 +34,12 @@ public class ZobristBitStrings implements Serializable {
         }
     }
 
-    public BitSet getSet (Position position, int index) {
+    BitSet getSet (Position position, int index) {
         return bitSets[position.getY() * 8 + position.getX()][index];
     }
 
     public static int bitSetToInt (BitSet bitSet) {
+        assert length == 32;
         int bitInteger = 0;
 
         for (int i = 0; i < 32; i++){
@@ -49,7 +50,9 @@ public class ZobristBitStrings implements Serializable {
         return bitInteger;
     }
 
-    public static long bitSetToLong (BitSet bitSet) {
+    static long bitSetToLong (BitSet bitSet) {
+        assert length == 64;
+
         long bitLong = 0;
 
         for (int i = 0; i < 64; i++){

@@ -294,8 +294,8 @@ public class Board implements Serializable{
         return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 100 || (!isCheck(turn) && getAllPossibleMoves(turn).size() == 0);
     }
 
-    public boolean isDrawNoStalemateCheck (PieceColor turn) {
-        return repetitionTracker.isDraw() || stateHistory.getCurrentState().getMovesSinceFiftyMoveReset() >= 50;
+    public boolean isEndOfGame (PieceColor turn) {
+        return isDraw(turn) || isCheckMate(turn);
     }
 
     @Override
@@ -326,7 +326,7 @@ public class Board implements Serializable{
     }
 
     public long customHashCode () {
-        BitSet result = new BitSet(64);
+        BitSet result = new BitSet(ZobristBitStrings.length);
 
         for (int y = 0; y < board.length; y++) {
             for (int x = 0; x < board[y].length; x++) {

@@ -2,162 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b269f6fd-6dc9-47e8-83a9-8b3a3668f8a0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/serialized_boards/1566754368249.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/META-INF/K.Raivio.shakki.main.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/Board$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/Board.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/BoardNotation.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/BoardState.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/BoardStateHistory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/RepetitionTracker.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/ThreatChecker.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/board/ZobristBitStrings.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/game/Game.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/Position.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/Quadruple.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/ReadWriter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/Span$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/Span.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/Splitter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/Triple.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/exceptions/CheckmateException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/exceptions/ChessException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/exceptions/DrawException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/exceptions/GameEndException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/exceptions/NotImplementedError.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/misc/exceptions/StopException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/CastlingKingMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/CastlingMove$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/CastlingMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/CastlingRookMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/CastlingType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/EnPassantMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/Move.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/NoMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/NormalMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/PromotionMove$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/move/PromotionMove.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/Bishop.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/CastlingKing.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/CastlingRook.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/King.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/Knight.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/NoPiece.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/Pawn$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/Pawn.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/Queen.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/Rook.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/basepiece/Piece$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/basepiece/Piece.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/basepiece/PieceColor$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/basepiece/PieceColor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/chess/piece/basepiece/PieceType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/misc/OrdinalConverter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/misc/Pair.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/misc/Saver.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/Player.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/RandomAI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/AI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/Bound.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/TranspositionTableEntry.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/TreeAIEngine$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/TreeAIEngine.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/TreeAIInterface.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/players/alphabetaai/WorkerThread.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/runner/CapableOfPlaying.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/runner/Runner.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/runner/Spectator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/runner/UI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/ui/TtyUI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564930703584.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564940272526.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564940305507.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564942236526.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564942236529.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564942319235.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564943060340.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564943060342.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564943212858.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564943212863.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564943251726.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1564943251731.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565028838267.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565343374698.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565343374707.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565344171878.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565344171885.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565628828661.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/1565628863487.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos10.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos11.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos4.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos5.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos6.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos7.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos8.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/pos9.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/boards/starting_position.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564859767542.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564926519867.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564930703575.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564940272512.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564940305495.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564942236520.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564942236528.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564942319218.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564943060334.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564943060341.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564943212850.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564943212860.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564943251717.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1564943251728.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565028838263.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565343374668.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565343374702.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565344171845.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565344171881.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565628828597.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/serialized_boards/1565628863444.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/classes/chess/piece/basepiece/PawnTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564930703584.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564940272526.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564940305507.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564942236526.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564942236529.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564942319235.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564943060340.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564943060342.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564943212858.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564943212863.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564943251726.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1564943251731.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565028838267.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565343374698.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565343374707.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565344171878.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565344171885.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565628828661.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/1565628863487.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos10.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos11.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos4.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos5.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos6.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos7.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos8.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/pos9.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/resources/boards/starting_position.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/AI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/AI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/WorkerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/WorkerThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ui/TtyUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ui/TtyUI.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -172,7 +29,7 @@
     <option name="myElementSize" value="238" />
   </component>
   <component name="DarkyenusTimeTracker">
-    <option name="totalTimeSeconds" value="166479" />
+    <option name="totalTimeSeconds" value="168741" />
     <option name="gitIntegration" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -202,60 +59,6 @@
         <option value="JUnit5 Test Class" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>F2E3</find>
-      <find>trans</find>
-      <find>NormalMove</find>
-      <find>equals</find>
-      <find>searchedPositions += 1;</find>
-      <find>turn</find>
-      <find>customHash</find>
-      <find>O-O</find>
-      <find>-1.0e10</find>
-      <find>getAllPossi</find>
-      <find>color</find>
-      <find>getAllposs</find>
-      <find>executeMove</find>
-      <find>breakpoint</find>
-      <find>G4h3</find>
-      <find>return</find>
-      <find>getResult</find>
-      <find>moiasd</find>
-      <find>g4h3</find>
-      <find>isDraw</find>
-      <find>transpo</find>
-      <find>new NoMove</find>
-      <find>-822346817</find>
-      <find>board.cus</find>
-      <find>board.customHashCode()</find>
-      <find>ConcurrentLinkedHashMap</find>
-      <find>ConcurrentHashMap</find>
-      <find>-673715242</find>
-      <find>transpositiontable</find>
-      <find>Valid</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>Board board</replace>
-      <replace>color</replace>
-      <replace>7</replace>
-      <replace>&quot;</replace>
-      <replace>(Board board, Position position)</replace>
-      <replace>HashSet&lt;&gt;()</replace>
-      <replace>Set&lt;</replace>
-      <replace>new Position(checkX, y)</replace>
-      <replace>new Position(checkX, checkY)</replace>
-      <replace>getLastMove()</replace>
-      <replace>LinkedHashSet</replace>
-      <replace>LinkedHashSet&lt;&gt;();</replace>
-      <replace>moves</replace>
-      <replace>Set&lt;Move&gt;</replace>
-      <replace>Set&lt;Move&gt; moves</replace>
-      <replace>ConcurrentHashMap</replace>
-      <replace>ConcurrentLinkedHashMap</replace>
-      <replace>Long.valueOf(board.customHashCode())</replace>
-    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -318,7 +121,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.PawnTest">
+  <component name="RunManager" selected="Application.Main no ram">
     <configuration default="true" type="tests" factoryName="Nosetests">
       <module name="shakki" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -386,7 +189,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="shakki.main" />
       <option name="VM_PARAMETERS" value="-Xmx6G -Xms6G" />
@@ -400,19 +203,6 @@
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="chess.board.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="TreeAIInterface" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="players.alphabetaai.TreeAIInterface" />
-      <module name="shakki.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="players.alphabetaai.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -458,17 +248,14 @@
       <item itemvalue="Application.Main no ram" />
       <item itemvalue="Application.Main" />
       <item itemvalue="Application.ThreatChecker" />
-      <item itemvalue="Application.TreeAIInterface" />
-      <item itemvalue="JUnit.PawnTest" />
       <item itemvalue="Gradle.chess" />
+      <item itemvalue="JUnit.PawnTest" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.chess" />
         <item itemvalue="JUnit.PawnTest" />
-        <item itemvalue="Application.Main" />
         <item itemvalue="Application.ThreatChecker" />
-        <item itemvalue="Application.TreeAIInterface" />
       </list>
     </recent_temporary>
   </component>
@@ -504,22 +291,15 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java</url>
-          <line>72</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="board.getAllPossibleMoves(turn)" language="JAVA" />

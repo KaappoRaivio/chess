@@ -4,6 +4,7 @@ import chess.board.Board;
 import chess.misc.Quadruple;
 import chess.misc.Span;
 import chess.misc.Splitter;
+import chess.misc.Triple;
 import chess.move.Move;
 import chess.piece.basepiece.PieceColor;
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
@@ -53,37 +54,29 @@ public class TreeAIInterface extends Player {
                 thread.join();
                 System.out.println("Joined " + thread.getName() + "!");
                 if (debug) {
-                    thread.getResult().forEach(line -> System.out.println(thread.getName() + ": " + line));
+                    thread.getResult().getFirst().forEach(line -> System.out.println(thread.getName() + ": " + line));
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        Set<Quadruple<Board, Move, Double, Integer>> results = new HashSet<>();
+        Set<Triple<Board, Move, Double>> results = new HashSet<>();
 
+        int positionsExamined = 0;
         for (WorkerThread thread : threads) {
-            results.addAll(thread.getResult());
+            positionsExamined += thread.getResult().getSecond();
+            results.addAll(thread.getResult().getFirst());
         }
 
         long end = System.currentTimeMillis();
         double duration = (end - start) / 1000.0; // seconds
 
-
-        int positionsExamined = results
-                .stream()
-                .mapToInt(Quadruple::getFourth)  // The fourth item is the amount of positions tested for each of the moves in the set, so we sum those up to get the total.
-                .reduce((x, y) -> x + y)
-                .orElseThrow();
-
         System.out.println("Took " + duration + " seconds, evaluated " + positionsExamined + " positions in total, " + positionsExamined / duration + " positions per second.");
 
-        Quadruple<Board, Move, Double, Integer> result;
-
-        result = results
+        Triple<Board, Move, Double> result = results
                 .stream()
-                .map((Quadruple<Board, Move, Double, Integer> b) -> new Quadruple<>(b.getFirst(), b.getSecond(), Math.abs(b.getThird()), b.getFourth()))
-                .min(Comparator.comparingDouble(Quadruple::getThird))
+                .max(Comparator.comparingDouble(Triple::getThird))
                 .orElseThrow();
 
         System.out.println(transpositionTable.size());

@@ -27,7 +27,8 @@ public class TtyUI implements UI {
     public Move getMove (PieceColor color) {
         while (true) {
             try {
-                System.out.print("Your move:> ");
+                System.out.println("Your move:> ");
+                System.out.flush(); // Some weird intelliJ shenanigans
                 String response = new Scanner(System.in).nextLine();
                 if (response.toLowerCase().equals("stop")) {
                     throw new StopException();

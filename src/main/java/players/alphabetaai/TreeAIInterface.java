@@ -82,18 +82,5 @@ public class TreeAIInterface extends Player {
         System.out.println(transpositionTable.size());
         System.out.println(transpositionTable.keySet());
         return result.getSecond();
-//        if (color == PieceColor.WHITE) {
-//        } else {
-//            result = results
-//                    .stream()
-//                    .min(Comparator.comparingDouble(Quadruple::getThird))
-//                    .orElseThrow();
-//        }
-//
-//        System.out.println(result.getThird());
-//
-//        return result
-//                .getSecond();
-
     }
 }

@@ -2,19 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b269f6fd-6dc9-47e8-83a9-8b3a3668f8a0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/serialized_boards/1566754368249.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/AI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/AI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/WorkerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/WorkerThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ui/TtyUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ui/TtyUI.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,7 +26,7 @@
     <option name="myElementSize" value="238" />
   </component>
   <component name="DarkyenusTimeTracker">
-    <option name="totalTimeSeconds" value="168741" />
+    <option name="totalTimeSeconds" value="169314" />
     <option name="gitIntegration" value="true" />
   </component>
   <component name="ExternalProjectsData">

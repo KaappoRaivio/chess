@@ -47,4 +47,5 @@ public interface Move extends Serializable {
     Position getOrigin ();
     PieceColor getColor ();
 
+    boolean isEnpassantMove ();
 }

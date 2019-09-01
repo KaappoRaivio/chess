@@ -3,17 +3,22 @@ package chess.board;
 import chess.misc.Position;
 import chess.misc.ReadWriter;
 import chess.misc.exceptions.ChessException;
+import chess.move.EnPassantMove;
 import chess.move.Move;
 import chess.move.NoMove;
+import chess.move.NormalMove;
+import chess.piece.CastlingKing;
 import chess.piece.NoPiece;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import chess.piece.basepiece.PieceType;
 import misc.Pair;
 import misc.Saver;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Board implements Serializable{
@@ -323,6 +328,65 @@ public class Board implements Serializable{
         }
 
         return builder.append("\n").append(vPadding).append(hPadding).append(" A B C D E F G H").append(hPadding).toString();
+    }
+
+    private static final Pattern number = Pattern.compile(".*[1-8]{1}$");
+
+    public String toFen () {
+        StringBuilder builder = new StringBuilder();
+
+        List<String> rows = new ArrayList<>(8);
+        for (int y = board.length - 1; y >= 0; y--) {
+            rows.add(Arrays.stream(board[y]).map(BoardNotation.DEFAULT_NOTATION::getString).reduce((accumulator, element) -> {
+                System.out.println(accumulator + ", " + element);
+                if (element.equals(".")) {
+                    if (number.matcher(accumulator).matches()) {
+                        try {
+                            accumulator = accumulator.substring(0, accumulator.length() - 1) + (Integer.parseInt(accumulator.substring(accumulator.length() - 1)) + 1);
+                        } catch (StringIndexOutOfBoundsException e) {
+                            accumulator = String.valueOf(Integer.parseInt(accumulator.substring(accumulator.length() - 1)) + 1);
+                        }
+                    } else if (accumulator.equals(".")){
+                        accumulator = "2";
+                    } else {
+                        accumulator += "1";
+                    }
+                } else {
+                    accumulator += element;
+                }
+                return accumulator;
+            }).orElseThrow());
+        }
+        builder.append(StringUtils.join(rows, '/'));
+        builder.append(" ");
+        builder.append(getTurn() == PieceColor.WHITE ? "w" : "b");
+        builder.append(" ");
+
+        builder.append(getPieceInSquare(Position.fromString("A1")).equals(new CastlingKing(PieceColor.WHITE)) ? "K" : "");
+        builder.append(getPieceInSquare(Position.fromString("H1")).equals(new CastlingKing(PieceColor.WHITE)) ? "Q" : "");
+        builder.append(getPieceInSquare(Position.fromString("A8")).equals(new CastlingKing(PieceColor.BLACK)) ? "k" : "");
+        builder.append(getPieceInSquare(Position.fromString("H8")).equals(new CastlingKing(PieceColor.BLACK)) ? "q" : "");
+
+        if (builder.toString().substring(builder.toString().length() - 1).equals(" "))  {// no castling available
+            builder.append("-");
+        }
+        builder.append(" ");
+
+        boolean isEnPassantPossible = getAllPossibleMoves(getTurn()).stream().anyMatch(Move::isEnpassantMove);
+        Move move = isEnPassantPossible ? getAllPossibleMoves(getTurn()).stream().filter(Move::isEnpassantMove).findAny().orElse(null) : null;
+
+        if (isEnPassantPossible) {
+            assert move != null;
+            builder.append(((EnPassantMove) move).getDestination());
+            builder.append(" ");
+        }
+
+        builder.append(getStateHistory().getCurrentState().getMovesSinceFiftyMoveReset());
+        builder.append(" ");
+        builder.append(getStateHistory().getCurrentState().getMoveCount() / 2);
+
+
+        return builder.toString();
     }
 
     public long customHashCode () {

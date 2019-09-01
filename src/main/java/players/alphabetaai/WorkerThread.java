@@ -1,9 +1,8 @@
 package players.alphabetaai;
 
 import chess.board.Board;
-import chess.misc.Triple;
+import chess.misc.Quadruple;
 import chess.move.Move;
-import misc.Pair;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class WorkerThread extends Thread {
     private List<Move> movesToTest;
     private Board board;
     volatile private AI callback;
-    private Pair<List<Triple<Board, Move, Double>>, Integer> result;
+    private List<Quadruple<Board, Move, Double, Integer>> result;
 
     WorkerThread(List<Move> movesToTest, Board board, AI callback) {
         super("User-generated worker thread " + ++count);
@@ -28,7 +27,7 @@ public class WorkerThread extends Thread {
         result = callback.callback(movesToTest, board);
     }
 
-    Pair<List<Triple<Board, Move, Double>>, Integer> getResult () {
+    List<Quadruple<Board, Move, Double, Integer>> getResult () {
         System.out.println("Table hits for " + getName() + ": " + ((TreeAIEngine) callback).getTableHits());
         return result;
     }

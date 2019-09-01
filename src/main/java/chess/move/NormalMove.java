@@ -71,6 +71,11 @@ public class NormalMove implements Move {
     }
 
     @Override
+    public boolean isEnpassantMove () {
+        return false;
+    }
+
+    @Override
     public String toString () {
         return origin + "" + destination;
     }

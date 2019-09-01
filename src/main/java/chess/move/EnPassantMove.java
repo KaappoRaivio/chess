@@ -30,4 +30,9 @@ public class EnPassantMove extends NormalMove {
 
         buffer[opponentPawnPosition.getY()][opponentPawnPosition.getX()] = new Pawn(color.invert());
     }
+
+    @Override
+    public boolean isEnpassantMove () {
+        return true;
+    }
 }

@@ -104,6 +104,11 @@ public class CastlingMove implements Move {
     }
 
     @Override
+    public boolean isEnpassantMove () {
+        return false;
+    }
+
+    @Override
     public String toString () {
         switch (castlingType) {
             case QUEEN_SIDE:

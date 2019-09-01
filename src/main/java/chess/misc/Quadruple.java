@@ -8,11 +8,19 @@ public class Quadruple<First, Second, Third, Fourth> {
     final private Third third;
     final private Fourth fourth;
 
-    public Quadruple(First first, Second second, Third third, Fourth fourth) {
+    public Quadruple (First first, Second second, Third third, Fourth fourth) {
         this.first = first;
         this.second = second;
         this.third = third;
         this.fourth = fourth;
+    }
+
+    public Quadruple (Triple<First, Second, Third> rest, Fourth fourth) {
+        this(rest.getFirst(), rest.getSecond(), rest.getThird(), fourth);
+    }
+
+    public Quadruple (First first, Triple<Second, Third, Fourth> rest) {
+        this(first, rest.getFirst(), rest.getSecond(), rest.getThird());
     }
 
     public First getFirst() {

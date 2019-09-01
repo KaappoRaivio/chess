@@ -3,22 +3,25 @@ package players.alphabetaai;
 import chess.board.Board;
 import chess.misc.Position;
 import chess.misc.Quadruple;
-import chess.misc.Triple;
 import chess.move.Move;
 import chess.piece.basepiece.Piece;
 import chess.piece.basepiece.PieceColor;
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import misc.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class TreeAIEngine implements AI {
+    private volatile double globalAlpha = -1e10;
+    private volatile double globalBeta  = +1e10;
+
+
     private int depth;
     private final PieceColor color;
     volatile private ConcurrentLinkedHashMap<Long, TranspositionTableEntry> transpositionTable;
@@ -30,6 +33,7 @@ public class TreeAIEngine implements AI {
         this.color = color;
 
         this.transpositionTable = transpositionTable;
+
     }
     private double searchAndEvaluate(Board board) {
 //        System.out.println(board.getTurn());
@@ -41,14 +45,15 @@ public class TreeAIEngine implements AI {
         PieceColor turn = maximizingPlayer ? color : color.invert();
 
         if (depth <= 0 || board.isEndOfGame(turn)) {
-            return evaluateCurrentPosition(board);
+            double value = evaluateCurrentPosition(board);
+            transpositionTableStore(board, new TranspositionTableEntry(depth, Bound.EXACT, value));
+            return value;
         }
 
         double alphaOrig = alpha;
         double  betaOrig = beta;
 
         if (hasValidEntry(board)) {
-            System.out.println("Valid");
             var entry = getEntry(board);
             if (entry.getDepth() >= depth) {
                 switch (entry.getBound()) {
@@ -155,23 +160,23 @@ public class TreeAIEngine implements AI {
     }
 
     @Override
-    public Pair<List<Triple<Board, Move, Double>>, Integer> callback (List<Move> movesToTest, Board board) {
+    public List<Quadruple<Board, Move, Double, Integer>> callback (List<Move> movesToTest, Board board) {
         searchedPositions = 0;
         tableHits = 0;
-        List<Triple<Board, Move, Double>> result = new ArrayList<>();
+        List<Quadruple<Board, Move, Double, Integer>> result = new ArrayList<>();
 
         for (Move move : movesToTest) {
             board.makeMove(move);
-            if (Move.parseMove("G4h3", PieceColor.BLACK, board).equals(move)) {
-                System.out.println("moiasd");
-            }
 
-            result.add(new Triple<>(board.deepCopy(), move, searchAndEvaluate(board)));
+            searchedPositions = 0;
+            double value = searchAndEvaluate(board);
+            result.add(new Quadruple<>(board.deepCopy(), move, value, searchedPositions));
+
             board.unMakeMove(1);
         }
         System.out.println(result);
 
-        return new Pair<>(result, searchedPositions);
+        return result;
     }
 
     int getTableHits() {

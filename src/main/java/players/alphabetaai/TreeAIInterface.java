@@ -54,19 +54,23 @@ public class TreeAIInterface extends Player {
                 thread.join();
                 System.out.println("Joined " + thread.getName() + "!");
                 if (debug) {
-                    thread.getResult().getFirst().forEach(line -> System.out.println(thread.getName() + ": " + line));
+                    thread.getResult().forEach(line -> System.out.println(thread.getName() + ": " + line));
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        Set<Triple<Board, Move, Double>> results = new HashSet<>();
+        Set<Quadruple<Board, Move, Double, Integer>> results = new HashSet<>();
 
         int positionsExamined = 0;
         for (WorkerThread thread : threads) {
-            positionsExamined += thread.getResult().getSecond();
-            results.addAll(thread.getResult().getFirst());
+            positionsExamined += thread.getResult()
+                    .stream()
+                    .mapToInt(Quadruple::getFourth)
+                    .reduce(Integer::sum)
+                    .orElse(0);
+            results.addAll(thread.getResult());
         }
 
         long end = System.currentTimeMillis();
@@ -74,9 +78,9 @@ public class TreeAIInterface extends Player {
 
         System.out.println("Took " + duration + " seconds, evaluated " + positionsExamined + " positions in total, " + positionsExamined / duration + " positions per second.");
 
-        Triple<Board, Move, Double> result = results
+        Quadruple<Board, Move, Double, Integer> result = results
                 .stream()
-                .max(Comparator.comparingDouble(Triple::getThird))
+                .max(Comparator.comparingDouble(Quadruple::getThird))
                 .orElseThrow();
 
         System.out.println(transpositionTable.size());

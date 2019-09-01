@@ -43,6 +43,11 @@ public class NoMove implements Move {
     }
 
     @Override
+    public boolean isEnpassantMove () {
+        return false;
+    }
+
+    @Override
     public String toString () {
         return "NoMove";
     }

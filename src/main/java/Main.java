@@ -17,7 +17,7 @@ import java.util.Collections;
 public class Main {
     public static void main (String[] args) {
 //        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/starting_position.txt", BoardNotation.DEFAULT_NOTATION);
-        Board board = Board.fromFile("/home/kaappo/git/chess/src/main/resources/boards/pos15.txt", BoardNotation.DEFAULT_NOTATION);
+        Board board = Saver.fromFile("/home/kaappo/git/chess/src/main/resources/serialized_boards/1567347710692.out", Board.class);
 //        board.makeMove(Move.parseMove("e2e4", PieceColor.WHITE, board));
 //        System.out.println(board.toFen());
 //        System.exit(0);
@@ -52,8 +52,8 @@ public class Main {
 //        System.exit(0);
         UI ui = new TtyUI();
         CapableOfPlaying[] players = {
-                new TreeAIInterface(PieceColor.WHITE, "tree ai", ui, 1),
-                new Player(PieceColor.BLACK, "AskoChess", ui),
+                new Player(PieceColor.WHITE, "AskoChess", ui),
+                new TreeAIInterface(PieceColor.BLACK, "tree ai", ui, 1),
         };
 
         Runner runner = new Runner(board, players, ui, Collections.emptyList());

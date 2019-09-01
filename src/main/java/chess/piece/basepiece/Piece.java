@@ -58,9 +58,9 @@ abstract public class Piece implements Serializable {
         switch (color) {
             case NO_COLOR:
             case WHITE:
-                return value + value * (getPieceSquareTable()[position.getY()][position.getX()]);
+                return value + value * (getPieceSquareTable()[position.getY()][position.getX()]) * 0.1;
             case BLACK:
-                return value + value * (getPieceSquareTable()[7 - position.getY()][position.getX()]);
+                return value + value * (getPieceSquareTable()[7 - position.getY()][position.getX()]) * 0.1;
             default:
                 throw new ChessException("");
 

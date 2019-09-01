@@ -11,15 +11,14 @@ import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class TreeAIEngine implements AI {
-    private volatile double globalAlpha = -1e10;
-    private volatile double globalBeta  = +1e10;
+    private AtomicReference<Double> globalAlpha = new AtomicReference<>(-1e10);
+    private AtomicReference<Double> globalBeta  = new AtomicReference<>(+1e10);
 
 
     private int depth;
@@ -37,10 +36,10 @@ public class TreeAIEngine implements AI {
     }
     private double searchAndEvaluate(Board board) {
 //        System.out.println(board.getTurn());
-        return minimax(board, depth, board.getTurn() == color, -1e10, +1e10);
+        return minimax(board, depth, board.getTurn() == color);
     }
 
-    private double minimax (Board board, int depth, boolean maximizingPlayer, double alpha, double beta) {
+    private double minimax (Board board, int depth, boolean maximizingPlayer) {
         ++searchedPositions;
         PieceColor turn = maximizingPlayer ? color : color.invert();
 
@@ -50,8 +49,8 @@ public class TreeAIEngine implements AI {
             return value;
         }
 
-        double alphaOrig = alpha;
-        double  betaOrig = beta;
+        Double alphaOrig = globalAlpha.get();
+        Double betaOrig = globalBeta.get();
 
         if (hasValidEntry(board)) {
             var entry = getEntry(board);
@@ -61,14 +60,14 @@ public class TreeAIEngine implements AI {
                         tableHits += 1;
                         return entry.getValue();
                     case LOWER:
-                        alpha = max(alpha, entry.getValue());
+                        globalAlpha.set(max(globalAlpha.get(), entry.getValue()));
                         break;
                     case UPPER:
-                        beta = min(beta, entry.getValue());
+                        globalBeta.set(min(globalBeta.get(), entry.getValue()));
                         break;
                 }
 
-                if (alpha >= beta) {
+                if (globalAlpha.get() >= globalBeta.get()) {
                     tableHits += 1;
                     return entry.getValue();
                 }
@@ -83,12 +82,12 @@ public class TreeAIEngine implements AI {
             for (Move move : board.getAllPossibleMoves(turn)) {
                 board.makeMove(move);
 
-                value = max(value, minimax(board, depth - 1, false, alpha, beta));
-                alpha = max(value, alpha);
+                value = max(value, minimax(board, depth - 1, false));
+                globalAlpha.set(max(value, globalAlpha.get()));
 
                 board.unMakeMove(1);
 
-                if (alpha >= beta) {
+                if (globalAlpha.get() >= globalBeta.get()) {
                     break;
                 }
             }
@@ -98,12 +97,13 @@ public class TreeAIEngine implements AI {
             for (Move move : board.getAllPossibleMoves(turn)) {
                 board.makeMove(move);
 
-                value = min(value, minimax(board, depth - 1, true, alpha, beta));
-                 beta = min(value, beta);
+                value = min(value, minimax(board, depth - 1, true));
+                globalBeta.set(min(value, globalBeta.get()));
+
 
                 board.unMakeMove(1);
 
-                if (alpha >= beta) {
+                if (globalAlpha.get() >= globalBeta.get()) {
                     break;
                 }
             }

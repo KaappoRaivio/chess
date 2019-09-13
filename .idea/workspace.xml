@@ -2,22 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b269f6fd-6dc9-47e8-83a9-8b3a3668f8a0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/serialized_boards/1567349101547.out" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/serialized_boards/1567349101554.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileContent/fileContent.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/chess/piece/basepiece/Piece.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/chess/piece/basepiece/Piece.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/players/alphabetaai/TreeAIEngine$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/players/alphabetaai/TreeAIEngine$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/players/alphabetaai/TreeAIEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/players/alphabetaai/TreeAIEngine.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chess/piece/basepiece/Piece.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chess/piece/basepiece/Piece.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/players/alphabetaai/TreeAIEngine.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,7 +23,7 @@
     <option name="myElementSize" value="238" />
   </component>
   <component name="DarkyenusTimeTracker">
-    <option name="totalTimeSeconds" value="179026" />
+    <option name="totalTimeSeconds" value="179438" />
     <option name="gitIntegration" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -67,7 +58,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1PvRjDIFe9yyCdqfTqy6EGZ1o2Z" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="Downloaded.Files.Path.Enabled" value="false" />
     <property name="Repository.Attach.Annotations" value="false" />
     <property name="Repository.Attach.JavaDocs" value="false" />
@@ -289,6 +284,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
